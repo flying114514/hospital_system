@@ -57,3 +57,5 @@ hos:
     accessKeySecret: ${sky.alioss.accessKeySecret}
     bucketName: ${sky.alioss.bucketName}
 
+mybatis-plus:
+  mapper-locations: com.hui

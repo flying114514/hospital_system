@@ -10,4 +10,9 @@ public class BasicStatusConstant {
 
     //禁用
     public static final Integer DISABLE = 0;
+
+    public static final String DOCTOR="doctor";
+    public static final String PATIENT="patient";
+    public static final String DOCTOR_SUCCESS="进入医生界面";
+    public static final String PATIENT_SUCCESS="进入患者界面";
 }

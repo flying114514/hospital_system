@@ -6,9 +6,7 @@ import com.hui.entity.PatientBasicInfo;
 
 //该接口用于患者建档
 public interface CreateService extends IService<PatientBasicInfo> {
-    //查询数据库是否存在该用户
-    PatientBasicInfo getPatientInfo(PatientBasicInfoDTO patientBasicInfoDTO);
 
-    //插入患者信息
+    //根据患者身份证补充信息,并新增患者
     PatientBasicInfo insertPatientInfo(PatientBasicInfoDTO patientBasicInfoDTO);
 }

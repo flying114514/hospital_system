@@ -22,6 +22,7 @@ public class MessageConstant {
     public static final String ORDER_NOT_FOUND = "订单不存在";
 
     public static final String GET_ROLE_FAIL = "未能获取角色";
+    public static final String IDCARD_ERROR="身份证号错误";
 
 
 

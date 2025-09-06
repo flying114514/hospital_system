@@ -1,5 +1,4 @@
-package com.hui.dto;
-
+package com.hui.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PatientBasicInfoDTO {
-    private String name;
-    private String idCard;
-    private String phone;
+public class SetPassword {
 
+    private String password;
+
+    private String IdCard;
 }

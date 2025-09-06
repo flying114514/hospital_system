@@ -58,4 +58,5 @@ hos:
     bucketName: ${sky.alioss.bucketName}
 
 mybatis-plus:
-  mapper-locations: com.hui
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.hui.entity

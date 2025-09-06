@@ -125,10 +125,10 @@
                 <version>${poi}</version>
             </dependency>
 
-
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-security</artifactId>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>5.7.3</version>
             </dependency>
 
             <!-- 添加缺失的依赖版本管理 -->
@@ -172,6 +172,9 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>3.5.3.1</version>
             </dependency>
+
+
+
         </dependencies>
 
 

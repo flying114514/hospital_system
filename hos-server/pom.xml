@@ -12,16 +12,7 @@
     <artifactId>hos-server</artifactId>
 
     <dependencies>
-        <!-- 模块依赖 -->
-        <dependency>
-            <groupId>com.hui</groupId>
-            <artifactId>hos-common</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>com.hui</groupId>
-            <artifactId>hos-pojo</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.hui</groupId>
             <artifactId>hos-common</artifactId>

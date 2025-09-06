@@ -12,15 +12,15 @@ public class JwtProperties {
     /**
      * 医生端用户生成jwt令牌相关配置
      */
-    private String adminSecretKey;
-    private long adminTtl;
-    private String adminTokenName;
+    private String docSecretKey;
+    private long docTtl;
+    private String docTokenName;
 
     /**
      * 患者端用户生成jwt令牌相关配置
      */
-    private String userSecretKey;
-    private long userTtl;
-    private String userTokenName;
+    private String patSecretKey;
+    private long patTtl;
+    private String patTokenName;
 
 }

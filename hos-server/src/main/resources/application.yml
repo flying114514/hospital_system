@@ -29,7 +29,7 @@ mybatis:
 logging:
   level:
     com:
-      sky:
+      hui:
         mapper: debug
         service: info
         controller: info

@@ -8,6 +8,7 @@ import com.hui.dto.PatientBasicInfoDTO;
 import com.hui.entity.PatientBasicInfo;
 import com.hui.mapper.CreateMapper;
 import com.hui.service.CreateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,10 @@ import java.util.Date;
 
 @Service
 public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInfo> implements CreateService {
+
+    @Autowired
+    private CreateMapper createMapper;
+
 
 
     /**
@@ -26,17 +31,8 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
 
         String idCard = patientBasicInfoDTO.getIdCard();
 
-        // 通过身份证号倒数第二位数字判断性别
-        String gender = "";
-        // 获取倒数第二位字符
-        char secondLastChar = idCard.charAt(idCard.length() - 2);
-        // 判断是否为数字
-        if (Character.isDigit(secondLastChar)) {
-            int secondLastDigit = Character.getNumericValue(secondLastChar);
-            // 奇数为男，偶数为女
-            gender = (secondLastDigit % 2 == 1) ? "男" : "女";
-        }
-
+        //根据身份证号获取性别
+        String gender = getGenderFromIdCard(idCard);
 
         // 根据身份证号计算年龄
         Integer age = calculateAgeFromIdCard(idCard);
@@ -48,14 +44,22 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
                 .name(patientBasicInfoDTO.getName())
                 .gender(gender)
                 .age(age)
-                .status(RegisteredStatusConstant.UN_REGISTERED)//默认状态未预约\
+                .status(RegisteredStatusConstant.UN_REGISTERED)//默认状态未预约
                 .wechatpay(0)
+                .id(createMapper.getPatientIdByIdCard(idCard))
                 .build();
-        this.save(patientBasicInfo);
+
+        //判断患者是否已建档,向orders插入数据,判断basic_patient中是否能查到
+        if (createMapper.selectInfo(idCard)==null) {
+            this.save(patientBasicInfo);
+        }
+        createMapper.insertInfo(patientBasicInfo);
 
 
         return patientBasicInfo;
     }
+
+
 
     /**
      * 根据身份证号计算年龄
@@ -88,5 +92,18 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
             // 解析失败返回null
             return null;
         }
+    }private String getGenderFromIdCard(String idCard){
+        // 通过身份证号倒数第二位数字判断性别
+        String gender = "";
+        // 获取倒数第二位字符
+        char secondLastChar = idCard.charAt(idCard.length() - 2);
+        // 判断是否为数字
+        if (Character.isDigit(secondLastChar)) {
+            int secondLastDigit = Character.getNumericValue(secondLastChar);
+            // 奇数为男，偶数为女
+            gender = (secondLastDigit % 2 == 1) ? "男" : "女";
+        }
+        return gender;
+
     }
 }

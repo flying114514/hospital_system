@@ -29,29 +29,6 @@ public class CreateController {
      * 患者建档,需要传进来一个对象,封装患者身份证号,手机号,根据身份证算出性别,年龄,状态统一为未挂号
      * ,同时对身份证进行验证,返回异常信息,如果成功直接返回数据
      */
-    //首先查询患者信息,如果有,展示用户信息,退出界面,没有才能建档
-    @GetMapping
-    public Result<PatientBasicInfo> getPatientInfo(PatientBasicInfoDTO patientBasicInfoDTO) {
-        String idCard = patientBasicInfoDTO.getIdCard();
-
-        if (idCard == null || (idCard.length() != 18)) {
-            return Result.error(MessageConstant.IDCARD_ERROR);
-        }
-
-        //查到信息直接返回
-        PatientBasicInfo basicInfo = createService.lambdaQuery()
-                .eq(PatientBasicInfo::getIdCard, idCard)
-                .one();
-
-        if (basicInfo ==null){
-            //没有该患者的信息,需要新增
-            basicInfo =createService.insertPatientInfo(patientBasicInfoDTO);
-            log.info("新增患者信息:{}",basicInfo);
-
-            return Result.success(basicInfo);
-        }
-        return Result.success(basicInfo);
-    }
 
     //新增密码
     @PostMapping("/password")

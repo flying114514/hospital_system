@@ -9,4 +9,5 @@ public interface CreateService extends IService<PatientBasicInfo> {
 
     //根据患者身份证补充信息,并新增患者
     PatientBasicInfo insertPatientInfo(PatientBasicInfoDTO patientBasicInfoDTO);
+
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hui.mapper.RegisterMapper">
+    <update id="update" parameterType="com.hui.entity.TemplateInfo">
+        UPDATE orders
+        <set>
+            <if test="card=null">
+                card = #{card},
+            </if>
+            department = #{department},
+            doctor_name=#{doctorName},
+            doctor_id= #{doctorId},
+            department_location= #{departmentLocation},
+            price= #{price},
+            level= #{level}
+        </set>
+        <where>
+            patient_id=#{id}
+        </where>
+    </update>
+
+    <update id="setNumber">
+        update hospital.orders
+        set number=#{number} ,predict_time=#{predictTime}
+        where patient_id=#{currentPatientId} and status=0
+    </update>
+    <update id="updateDoctorTime">
+        update hospital.time_details
+        set status=1
+        <where>
+            doctor_id=#{doctorId} and number=#{number}
+        </where>
+    </update>
+    <update id="updateDoctorRemain">
+        update hospital.doctor_details
+        set remain=remain-1
+        <where>
+            doctor_id=#{doctorId}
+        </where>
+    </update>
+
+
+    <select id="pageDoctor" resultType="com.hui.entity.DoctorDetails"
+            parameterType="com.hui.dto.DoctorPageQueryDTO">
+        select * from doctor_details
+        <where>
+            <if test="name != null">
+                and department like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+    <select id="pageTime" resultType="com.hui.entity.TimeDetails">
+        select * from hospital.time_details
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="status!=null">
+                and status= #{status}
+            </if>
+        </where>
+    </select>
+    <select id="getDoctorId" resultType="java.lang.Long">
+        select doctor_id from hospital.orders
+        where patient_id=#{currentPatientId} and status=0
+    </select>
+    <select id="getAllInfo" resultType="com.hui.entity.Registration">
+        select patient_name,doctor_name,department,department_location,price,number,age,level,predict_time
+        from hospital.orders
+        where patient_id=#{currentPatientId} and status=0
+    </select>
+</mapper>

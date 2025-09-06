@@ -8,15 +8,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+/**
+ * 患者基本信息
+ * */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("basic_patient")
 @Builder
 public class PatientBasicInfo {
-    @TableId(value = "id", type = IdType.AUTO)
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     private String name;
@@ -35,4 +37,6 @@ public class PatientBasicInfo {
     private Integer wechatpay;
 
     private String password;
+
+
 }

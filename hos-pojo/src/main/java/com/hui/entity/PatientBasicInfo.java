@@ -8,7 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+/**
+ * 患者基本信息
+ * */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,4 +37,6 @@ public class PatientBasicInfo {
     private Integer wechatpay;
 
     private String password;
+
+
 }

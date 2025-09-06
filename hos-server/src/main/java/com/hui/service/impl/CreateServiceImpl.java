@@ -8,6 +8,7 @@ import com.hui.dto.PatientBasicInfoDTO;
 import com.hui.entity.PatientBasicInfo;
 import com.hui.mapper.CreateMapper;
 import com.hui.service.CreateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,10 @@ import java.util.Date;
 
 @Service
 public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInfo> implements CreateService {
+
+    @Autowired
+    private CreateMapper createMapper;
+
 
 
     /**
@@ -51,7 +56,10 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
                 .status(RegisteredStatusConstant.UN_REGISTERED)//默认状态未预约\
                 .wechatpay(0)
                 .build();
+
         this.save(patientBasicInfo);
+
+        createMapper.insertInfo(patientBasicInfo);
 
 
         return patientBasicInfo;

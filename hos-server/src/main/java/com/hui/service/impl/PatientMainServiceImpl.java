@@ -1,7 +1,9 @@
 package com.hui.service.impl;
 
 import com.hui.constant.MessageConstant;
+import com.hui.context.BaseContext;
 import com.hui.dto.LoginDTO;
+import com.hui.dto.RechargeDTO;
 import com.hui.exception.AccountNotFoundException;
 import com.hui.exception.PasswordErrorException;
 import com.hui.mapper.PatientMainMapper;
@@ -44,5 +46,23 @@ public class PatientMainServiceImpl implements PatientMainService {
 
         //3、返回实体对象
         return loginVO;
+    }
+
+    //查询余额是否足够
+    @Override
+    public String checkMoney(RechargeDTO rechargeDTO) {
+        Long id=BaseContext.getCurrentId();
+        Double money = rechargeDTO.getMoney();//要存的钱
+        String paymentMethod = rechargeDTO.getPaymentMethod();
+        Double remain=patientMainMapper.getMoney(paymentMethod,id);
+        if (remain<money){
+            return "余额不足";
+        }
+        //银行减少余额
+        patientMainMapper.minusMoney(money,paymentMethod,id);
+
+        //医保卡修改余额
+        patientMainMapper.updateMoney(money,id);
+        return "充值"+money+"成功";
     }
 }

@@ -40,6 +40,28 @@ public class JwtTokenPatInterceptor implements HandlerInterceptor {
             //当前拦截到的不是动态方法，直接放行
             return true;
         }
+        //判断当前拦截到的是Controller的方法还是其他资源
+        if (!(handler instanceof HandlerMethod)) {
+            //当前拦截到的不是动态方法，直接放行
+            return true;
+        }
+
+        log.info("=== JWT 拦截器调试信息 ===");
+
+        // 打印所有请求头信息
+        log.info("所有请求头信息:");
+        request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
+            log.info("Header - {}: {}", headerName, request.getHeader(headerName));
+        });
+
+        // 检查 JwtProperties 配置
+        log.info("配置的 patTokenName: {}", jwtProperties.getPatTokenName());
+
+        if (jwtProperties.getPatTokenName() == null) {
+            log.error("patTokenName 配置为空，请检查配置文件");
+            response.setStatus(401);
+            return false;
+        }
 
         //1、从请求头中获取令牌
         String token = request.getHeader(jwtProperties.getPatTokenName());
@@ -49,7 +71,7 @@ public class JwtTokenPatInterceptor implements HandlerInterceptor {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getPatSecretKey(), token);
             Long userId = Long.valueOf(claims.get(JwtClaimsConstant.PAT_ID).toString());
-            log.info("当前患者id：", userId);
+            log.info("当前患者id：{}", userId);
 
             //将患者id设置到ThreadLocal中,重点
             BaseContext.setCurrentId(userId);

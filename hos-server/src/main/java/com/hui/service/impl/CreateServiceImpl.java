@@ -4,6 +4,7 @@ package com.hui.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hui.constant.MessageConstant;
 import com.hui.constant.RegisteredStatusConstant;
+import com.hui.dto.BankDTO;
 import com.hui.dto.PatientBasicInfoDTO;
 import com.hui.entity.PatientBasicInfo;
 import com.hui.mapper.CreateMapper;
@@ -51,6 +52,13 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
         //判断患者是否已建档,向orders插入数据,判断basic_patient中是否能查到
         if (createMapper.selectInfo(idCard)==null) {
             this.save(patientBasicInfo);
+            //建完档新建银行账户
+            BankDTO bankDTO = BankDTO.builder()
+                    .name(patientBasicInfo.getName())
+                    .patientId(String.valueOf(createMapper.getPatientIdByIdCard(idCard)))
+                    .cash(10000.0)
+                    .wechatPay(10000.0).build();
+            createMapper.insertBank(bankDTO);
         }
         createMapper.insertInfo(patientBasicInfo);
 

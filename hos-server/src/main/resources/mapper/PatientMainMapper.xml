@@ -2,9 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hui.mapper.PatientMainMapper">
+    <update id="updateMoney">
+        update medical_card
+        set balance=#{money}+balance
+        where patient_id=#{currentId}
+    </update>
+    <update id="minusMoney">
+        update bank
+        set ${paymentMethod}=${paymentMethod}-#{money}
+        where patient_id= #{currentId}
+    </update>
 
 
     <select id="getByName" resultType="com.hui.vo.LoginVO">
         select id,password from hospital.basic_patient where name=#{name}
+    </select>
+    <select id="getMoney" resultType="java.lang.Double">
+        select ${paymentMethod} from bank where patient_id=#{currentId}
     </select>
 </mapper>

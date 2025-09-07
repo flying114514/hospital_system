@@ -98,13 +98,19 @@ public class RegisterController {
         return Result.success(word);
     }
 
-    //患者选择完号后,展示所有挂号信息
+    //患者选择完号后,展示所有挂号信息,如果前端传送的数据是确定,展示数据,如果是取消,删除条目
     @GetMapping("/all")
-    public Result<Registration> getAllInfo(HttpSession session,){
+    public Result<Registration> getAllInfo(HttpSession session,String word){
         Long currentPatientId = (Long) session.getAttribute("currentPatientId");
-        Registration registration=registerService.getAllInfo(currentPatientId);
-        return Result.success(registration);
+        if(word.equals("确定")){
+            Registration registration=registerService.getAllInfo(currentPatientId);
+            return Result.success(registration);
+        }else{registerService.deleteInfo(currentPatientId);
+            return Result.success();
+        }
     }
+
+    //患者缴费
 }
 
 

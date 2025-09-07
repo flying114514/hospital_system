@@ -1,6 +1,7 @@
 package com.hui.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hui.dto.BankDTO;
 import com.hui.entity.DepartmentList;
 import com.hui.entity.PatientBasicInfo;
 import org.apache.ibatis.annotations.Select;
@@ -15,4 +16,7 @@ public interface CreateMapper extends BaseMapper<PatientBasicInfo> {
 
     //根据idCard查询patientId
     Long getPatientIdByIdCard(String idCard);
+
+    //新建银行账户
+    void insertBank(BankDTO bankDTO);
 }

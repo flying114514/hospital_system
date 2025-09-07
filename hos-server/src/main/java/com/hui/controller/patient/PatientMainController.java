@@ -1,7 +1,9 @@
 package com.hui.controller.patient;
 
 import com.hui.constant.JwtClaimsConstant;
+import com.hui.context.BaseContext;
 import com.hui.dto.LoginDTO;
+import com.hui.dto.RechargeDTO;
 import com.hui.properties.JwtProperties;
 import com.hui.result.Result;
 import com.hui.service.PatientMainService;
@@ -21,7 +23,7 @@ import java.util.Map;
 /**
  * 患者主页面
  * */
-@RequestMapping("/user")
+@RequestMapping("/user/main")
 @RestController
 @Slf4j
 public class PatientMainController {
@@ -57,8 +59,9 @@ public class PatientMainController {
 
     //患者充值  xxx你已成功向医保卡充值xxx元/充值失败,微信/现金余额不足
     @PostMapping("/recharge")
-    public Result<String> recharge(Double money){
-        //先查询用户余额是否足够
-        return Result.success("");
+    public Result<String> recharge(@RequestBody RechargeDTO rechargeDTO){
+        //先查询用户余额是否足够,已经在用户建档时创建了银行账户
+        String result=patientMainService.checkMoney(rechargeDTO);
+        return Result.success(result);
     }
 }

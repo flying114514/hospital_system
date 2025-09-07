@@ -100,7 +100,7 @@ public class RegisterController {
 
     //患者选择完号后,展示所有挂号信息
     @GetMapping("/all")
-    public Result<Registration> getAllInfo(HttpSession session){
+    public Result<Registration> getAllInfo(HttpSession session,){
         Long currentPatientId = (Long) session.getAttribute("currentPatientId");
         Registration registration=registerService.getAllInfo(currentPatientId);
         return Result.success(registration);

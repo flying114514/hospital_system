@@ -26,4 +26,7 @@ public interface RegisterService extends IService<Registration> {
 
     //查询挂号全部详细信息
     Registration getAllInfo(Long currentPatientId);
+
+    //根据id删除数据
+    void deleteInfo(Long currentPatientId);
 }

@@ -46,4 +46,6 @@ public interface RegisterMapper extends BaseMapper<Registration> {
     //根据患者id查询详细信息
     Registration getAllInfo(Long currentPatientId);
 
+    //根据患者id删除状态是未挂号的条目
+    void deleteInfo(Long currentPatientId);
 }

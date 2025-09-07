@@ -45,7 +45,6 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
                 .gender(gender)
                 .age(age)
                 .status(RegisteredStatusConstant.UN_REGISTERED)//默认状态未预约
-                .wechatpay(0)
                 .id(createMapper.getPatientIdByIdCard(idCard))
                 .build();
 

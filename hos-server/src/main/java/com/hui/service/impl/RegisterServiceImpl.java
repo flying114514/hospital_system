@@ -115,5 +115,11 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
         return registration;
     }
 
+    //根据患者id删除数据
+    @Override
+    public void deleteInfo(Long currentPatientId) {
+        registerMapper.deleteInfo(currentPatientId);
+    }
+
 
 }

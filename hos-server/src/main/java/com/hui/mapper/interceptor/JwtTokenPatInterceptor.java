@@ -48,7 +48,7 @@ public class JwtTokenPatInterceptor implements HandlerInterceptor {
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getPatSecretKey(), token);
-            Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+            Long userId = Long.valueOf(claims.get(JwtClaimsConstant.PAT_ID).toString());
             log.info("当前患者id：", userId);
 
             //将患者id设置到ThreadLocal中,重点

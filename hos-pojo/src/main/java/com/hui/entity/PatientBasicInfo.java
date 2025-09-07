@@ -34,8 +34,6 @@ public class PatientBasicInfo {
 
     private Integer status;
 
-    private Integer wechatpay;
-
     private String password;
 
 

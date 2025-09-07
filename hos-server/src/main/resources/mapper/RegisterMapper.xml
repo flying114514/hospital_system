@@ -39,6 +39,10 @@
             doctor_id=#{doctorId}
         </where>
     </update>
+    <delete id="deleteInfo">
+        delete from hospital.orders
+        where patient_id=#{currentPatientId} and status=0
+    </delete>
 
 
     <select id="pageDoctor" resultType="com.hui.entity.DoctorDetails"

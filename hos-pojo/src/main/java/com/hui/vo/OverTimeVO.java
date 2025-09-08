@@ -1,18 +1,17 @@
-package com.hui.dto;
+package com.hui.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 /**
- * 挂号所需实体类
+ * 定时任务类需要的对象
  * */
-@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class RegistrationDTO {
-    private String name;
-    private String idCard;
+@Data
+public class OverTimeVO {
+    private Integer id;//挂号单id
+    private Integer status;
 }

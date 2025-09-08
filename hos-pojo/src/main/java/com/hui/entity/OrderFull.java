@@ -1,20 +1,21 @@
-package com.hui.dto;
+package com.hui.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
- * 患者缴费时需要传递的对象
+ * 患者支付成功后,向orders表中补全信息
  * */
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PayDTO {
+@Data
+public class OrderFull {
+    private Integer id;
+    private LocalDateTime createTime;
     private String paymentMethod;
-    private String detail;
-    private Double price;//要交的钱
-    private Integer patientId;
 }

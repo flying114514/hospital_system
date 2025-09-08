@@ -1,28 +1,24 @@
-package com.hui.entity;
+package com.hui.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 /**
- * 封装临时向表存入的数据
+ * 分页查找历史挂号数据
  * */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TemplateInfo {
-    private String id;
-    private String patientName;
+public class GuaHistoryVO {
     private String doctorName;
-    private String idCard;
     private String department;
-    private String patientId;
-    private String doctorId;
     private String departmentLocation;
-    private String price;
+    private String createTime;
+    private Double price;
+    private String paymentMethod;
     private String level;
-
+    private Integer status;
 
 }

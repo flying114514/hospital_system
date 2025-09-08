@@ -12,6 +12,7 @@ import com.hui.exception.PasswordErrorException;
 import com.hui.mapper.PatientMainMapper;
 import com.hui.result.PageResult;
 import com.hui.service.PatientMainService;
+import com.hui.vo.GuaHistoryVO;
 import com.hui.vo.LoginVO;
 import com.hui.vo.MedicalCardVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,6 @@ public class PatientMainServiceImpl implements PatientMainService {
         Integer patientId = medicalCardDTO.getId();
         //根据id查询医保卡
         MedicalCardVO medicalCardVO=patientMainMapper.checkCard(patientId);
-        medicalCardVO.setDetail("您的医保卡查询成功");
 
         if(medicalCardVO==null){
             //根据id查询患者姓名
@@ -127,7 +127,23 @@ public class PatientMainServiceImpl implements PatientMainService {
             //再次查询医保卡
             medicalCardVO=patientMainMapper.checkCard(patientId);
             medicalCardVO.setDetail("您的医保卡尚不存在,已为您新建医保卡");
+        }else {
+            medicalCardVO.setDetail("您的医保卡查询成功");
         }
         return medicalCardVO;
+    }
+
+
+    //查询患者历史挂号数据
+    @Override
+    public PageResult selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO) {
+
+        Integer pageSize = guaHistoryPageDTO.getPageSize();
+        Integer pageNum = guaHistoryPageDTO.getPage();
+        PageHelper.startPage(pageNum,pageSize);
+
+        //查orders表
+        Page<GuaHistoryVO> page=patientMainMapper.selectGuaHistory(guaHistoryPageDTO);
+        return new PageResult(page.getTotal(),page.getResult());
     }
 }

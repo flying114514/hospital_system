@@ -1,4 +1,4 @@
-package com.hui.dto;
+package com.hui.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,13 +8,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * 设置未支付状态所需对象
+ * 获取在15分钟内未完成挂号的订单
  * */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class SetUnpaidDTO {
-    private Integer registerId;
+
+public class EndTimeVO {
     private LocalDateTime time;
+    private Integer id;//挂号单id
+
 }

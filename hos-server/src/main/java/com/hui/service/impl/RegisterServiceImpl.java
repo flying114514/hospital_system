@@ -3,15 +3,15 @@ package com.hui.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hui.dto.DoctorPageQueryDTO;
-import com.hui.dto.PayDTO;
-import com.hui.dto.RegistrationDTO;
-import com.hui.dto.TimeDTO;
+import com.hui.constant.RegisteredStatusConstant;
+import com.hui.context.BaseContext;
+import com.hui.dto.*;
 import com.hui.entity.*;
 import com.hui.mapper.CreateMapper;
 import com.hui.mapper.RegisterMapper;
 import com.hui.result.PageResult;
 import com.hui.service.RegisterService;
+import com.hui.vo.CancelOrderVO;
 import com.hui.vo.PayVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -133,6 +133,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
         Double price = payDTO.getPrice();
 
         PayVO payVO = new PayVO();
+        Double remain;
         if(paymentMethod.equals("微信") || paymentMethod.equals("现金")){
             //原价挂号,调用bank表
 
@@ -145,28 +146,66 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
             payDTO.setPaymentMethod(paymentMethod);
 
             //先查询银行余额,判断是否足够
-            Double remain=registerMapper.getBankById(payDTO);
+            remain=registerMapper.getBankById(payDTO);
+
             if (remain<price){
                 payVO.setDetail("余额不足,请更换缴费方式或充值后缴费");
                 throw new RuntimeException("余额不足");
             }
             //余额充足,在相应位置扣钱
             registerMapper.minusMoney(payDTO);
-            //TODO:在患者个人界面的查询历史挂号记录
-            payVO.setDetail(rawPaymentMethod+"支付成功");
 
-            return payVO;
-            //返回成功信息
         }else {
             //医保卡支付,打折
-            price*=0.5;
+            price *= 0.5;
             payDTO.setPrice(price);
+
+            //查询医保卡余额是否足够
+            remain=registerMapper.getCardById(payDTO);
+            if (remain<price){
+                payVO.setDetail("余额不足,请更换缴费方式或充值后缴费");
+                throw new RuntimeException("余额不足");
+            }
             //在medical_card直接修改
             registerMapper.minusCard(payDTO);
-            //TODO更改成功,在患者个人界面查询历史挂号记录,微信支付和医保卡支付所存的表和逻辑是一样的
-            payVO.setDetail("医保卡支付成功");
-            return payVO;
+
+            String detail="医保卡";
+            //用医保卡交钱,修改orders里的price
+            registerMapper.setPrice(payDTO,detail);
         }
+
+            //更改挂号单状态为待叫号
+            UpdateStatus updateStatus = UpdateStatus.builder()
+                    .id(Math.toIntExact(payDTO.getPatientId())).build();
+            registerMapper.updateStatus(updateStatus);
+
+            payVO.setDetail(rawPaymentMethod+"支付成功");
+            //返回成功信息
+            return payVO;
+
+
+    }
+
+    //患者取消挂号
+    @Override
+    public CancelOrderVO cancelOrder(CancelOrderDTO cancelOrderDTO) {
+        CancelOrderVO cancelOrderVO = null;
+
+        //判断当前时间距离预计就诊时间是否还有15分钟,只查询待叫号的挂号单
+        cancelOrderDTO.setStatus(RegisteredStatusConstant.WAIT_FOR_CALL);
+
+        //前端已经为我们传递的只可能是一个数据,返回的不可能是list
+        LocalDateTime time=registerMapper.getEndTime(cancelOrderDTO);
+
+        //在15分钟内,不可取消
+        if (time.isAfter(LocalDateTime.now().plusMinutes(15))){
+            cancelOrderVO.setDetail("距离预计就诊时间不足15分钟,取消挂号失败");
+            return cancelOrderVO;
+        }
+        //不在15分钟内,可以取消
+        registerMapper.cancelOrder(cancelOrderDTO);
+        cancelOrderVO.setDetail("取消挂号单成功");
+        return cancelOrderVO;
     }
 
 

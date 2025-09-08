@@ -1,11 +1,9 @@
 package com.hui.mapper;
 
 import com.github.pagehelper.Page;
-import com.hui.dto.MedicalCardDTO;
-import com.hui.dto.MinusMoneyDTO;
-import com.hui.dto.PayHistoryDTO;
-import com.hui.dto.PayHistoryPageDTO;
+import com.hui.dto.*;
 import com.hui.entity.PayHistory;
+import com.hui.vo.GuaHistoryVO;
 import com.hui.vo.LoginVO;
 import com.hui.vo.MedicalCardVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -42,4 +40,7 @@ public interface PatientMainMapper {
     //根据id获取患者姓名
     @Select("select name from basic_patient where id=#{patientId}" )
     String getPatientName(Integer patientId);
+
+    //查询历史挂号信息
+    Page<GuaHistoryVO> selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO);
 }

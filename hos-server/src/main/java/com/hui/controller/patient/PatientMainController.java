@@ -2,10 +2,7 @@ package com.hui.controller.patient;
 
 import com.hui.constant.JwtClaimsConstant;
 import com.hui.context.BaseContext;
-import com.hui.dto.LoginDTO;
-import com.hui.dto.MedicalCardDTO;
-import com.hui.dto.PayHistoryPageDTO;
-import com.hui.dto.RechargeDTO;
+import com.hui.dto.*;
 import com.hui.entity.ResultDetail;
 import com.hui.properties.JwtProperties;
 import com.hui.result.PageResult;
@@ -82,6 +79,15 @@ public class PatientMainController {
         Long patientId = BaseContext.getCurrentId();
         payHistoryPageDTO.setPatientId(Math.toIntExact(patientId));
         PageResult pageResult=patientMainService.selectPayHistory(payHistoryPageDTO);
+        return Result.success(pageResult);
+    }
+
+    //患者查看历史挂号记录
+    @GetMapping("/guahistory")
+    public Result<PageResult> selectGuaHistory(@RequestBody GuaHistoryPageDTO guaHistoryPageDTO){
+        Long patientId = BaseContext.getCurrentId();
+        guaHistoryPageDTO.setPatientId(Math.toIntExact(patientId));
+        PageResult pageResult=patientMainService.selectGuaHistory(guaHistoryPageDTO);
         return Result.success(pageResult);
     }
 

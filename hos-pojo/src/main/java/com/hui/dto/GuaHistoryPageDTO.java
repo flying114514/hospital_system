@@ -5,16 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 /**
- * 设置未支付状态所需对象
+ * 患者查询历史挂号数据所需对象
  * */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SetUnpaidDTO {
-    private Integer registerId;
-    private LocalDateTime time;
+public class GuaHistoryPageDTO {
+    private Integer page;
+    private Integer pageSize;
+    private Integer patientId;
 }

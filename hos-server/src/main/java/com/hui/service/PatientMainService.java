@@ -1,9 +1,6 @@
 package com.hui.service;
 
-import com.hui.dto.LoginDTO;
-import com.hui.dto.MedicalCardDTO;
-import com.hui.dto.PayHistoryPageDTO;
-import com.hui.dto.RechargeDTO;
+import com.hui.dto.*;
 import com.hui.entity.ResultDetail;
 import com.hui.result.PageResult;
 import com.hui.vo.LoginVO;
@@ -22,4 +19,9 @@ public interface PatientMainService {
 
     //查询患者医保卡信息
     MedicalCardVO checkCard(MedicalCardDTO medicalCardDTO);
+
+    //查询患者历史挂号数据
+    PageResult selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO);
+
+
 }

@@ -23,6 +23,9 @@ public class RegisteredStatusConstant {
     //住院中
     public static final Integer IN_HOSPITAL = 5;
 
+    //已超时
+    public static final Integer OVER_TIME = 6;
+
 
 
 }

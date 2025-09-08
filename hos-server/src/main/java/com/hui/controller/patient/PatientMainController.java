@@ -3,19 +3,21 @@ package com.hui.controller.patient;
 import com.hui.constant.JwtClaimsConstant;
 import com.hui.context.BaseContext;
 import com.hui.dto.LoginDTO;
+import com.hui.dto.MedicalCardDTO;
+import com.hui.dto.PayHistoryPageDTO;
 import com.hui.dto.RechargeDTO;
+import com.hui.entity.ResultDetail;
 import com.hui.properties.JwtProperties;
+import com.hui.result.PageResult;
 import com.hui.result.Result;
 import com.hui.service.PatientMainService;
 import com.hui.utils.JwtUtil;
 import com.hui.vo.LoginVO;
+import com.hui.vo.MedicalCardVO;
 import com.hui.vo.PatientLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,11 +59,30 @@ public class PatientMainController {
 
     }
 
+    //查询用户是否有医保卡,如果没有,要添加医保卡账户,如果有,展示医保卡信息
+    @PostMapping("/login/checkcard")
+    public Result<MedicalCardVO> checkCard(MedicalCardDTO medicalCardDTO){
+        Long patientId = BaseContext.getCurrentId();
+        medicalCardDTO.setId(Math.toIntExact(patientId));
+        MedicalCardVO medicalCardVO=patientMainService.checkCard(medicalCardDTO);
+        return Result.success(medicalCardVO);
+    }
+
     //患者充值  xxx你已成功向医保卡充值xxx元/充值失败,微信/现金余额不足
     @PostMapping("/recharge")
-    public Result<String> recharge(@RequestBody RechargeDTO rechargeDTO){
+    public Result<ResultDetail> recharge(@RequestBody RechargeDTO rechargeDTO){
         //先查询用户余额是否足够,已经在用户建档时创建了银行账户
-        String result=patientMainService.checkMoney(rechargeDTO);
-        return Result.success(result);
+        ResultDetail resultDetail=patientMainService.checkMoney(rechargeDTO);
+        return Result.success(resultDetail);
     }
+
+    //患者查看历史缴费记录
+    @GetMapping("/history")
+    public Result<PageResult> selectPayHistory(@RequestBody PayHistoryPageDTO payHistoryPageDTO){
+        Long patientId = BaseContext.getCurrentId();
+        payHistoryPageDTO.setPatientId(Math.toIntExact(patientId));
+        PageResult pageResult=patientMainService.selectPayHistory(payHistoryPageDTO);
+        return Result.success(pageResult);
+    }
+
 }

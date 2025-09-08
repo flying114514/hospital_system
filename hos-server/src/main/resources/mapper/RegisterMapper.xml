@@ -39,6 +39,21 @@
             doctor_id=#{doctorId}
         </where>
     </update>
+    <update id="minusMoney">
+        update hospital.bank
+        set ${paymentMethod}=${paymentMethod}-#{price}
+        where patient_id=#{patientId}
+    </update>
+    <update id="minusCard">
+        update hospital.medical_card
+        set balance=balance-#{price}
+        where patient_id= #{patientId}
+    </update>
+    <update id="setUnpaid">
+        update hospital.orders
+        set status=4,end_time=
+        where patient_id= #{patientId} and status=0
+    </update>
     <delete id="deleteInfo">
         delete from hospital.orders
         where patient_id=#{currentPatientId} and status=0
@@ -70,8 +85,12 @@
         where patient_id=#{currentPatientId} and status=0
     </select>
     <select id="getAllInfo" resultType="com.hui.entity.Registration">
-        select patient_name,doctor_name,department,department_location,price,number,age,level,predict_time
+        select id,patient_name,doctor_name,department,department_location,price,number,age,level,predict_time
         from hospital.orders
         where patient_id=#{currentPatientId} and status=0
+    </select>
+    <select id="getBankById" resultType="java.lang.Double">
+        select ${paymentMethod} from hospital.bank
+        where patient_id=#{patientId}
     </select>
 </mapper>

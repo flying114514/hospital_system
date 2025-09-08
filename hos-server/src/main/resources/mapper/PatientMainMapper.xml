@@ -2,22 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hui.mapper.PatientMainMapper">
+    <insert id="insertPay">
+        insert into pay_history (patient_id, money, payment_method, time)
+        values (#{patientId}, #{money}, #{paymentMethod}, #{time})
+    </insert>
+    <insert id="createCard">
+        insert into medical_card (patient_id, balance, name)
+        values (#{id}, #{balance}, #{name})
+    </insert>
     <update id="updateMoney">
         update medical_card
-        set balance=#{money}+balance
-        where patient_id=#{currentId}
+        set balance=#{money} + balance
+        where patient_id = #{currentId}
     </update>
     <update id="minusMoney">
         update bank
-        set ${paymentMethod}=${paymentMethod}-#{money}
-        where patient_id= #{currentId}
+        set ${paymentMethod}=${paymentMethod} - #{money}
+        where patient_id = #{patientId}
     </update>
 
 
     <select id="getByName" resultType="com.hui.vo.LoginVO">
-        select id,password from hospital.basic_patient where name=#{name}
+        select id, password
+        from hospital.basic_patient
+        where name = #{name}
     </select>
     <select id="getMoney" resultType="java.lang.Double">
-        select ${paymentMethod} from bank where patient_id=#{currentId}
+        select ${paymentMethod} as remain
+        from bank
+        where patient_id = #{currentId}
+    </select>
+    <select id="selectPayHistory" resultType="com.hui.entity.PayHistory">
+        select time, money, payment_method
+        from pay_history
+        where patient_id = #{patientId}
+          and time between #{beginTime} and #{endTime}
+    </select>
+    <select id="checkCard" resultType="com.hui.vo.MedicalCardVO">
+        select *
+        from medical_card
+        where patient_id = #{patientId}
     </select>
 </mapper>

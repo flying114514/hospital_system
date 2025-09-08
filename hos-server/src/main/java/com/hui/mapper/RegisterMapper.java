@@ -3,6 +3,7 @@ package com.hui.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
 import com.hui.dto.DoctorPageQueryDTO;
+import com.hui.dto.PayDTO;
 import com.hui.dto.TimeDTO;
 import com.hui.entity.*;
 import org.apache.ibatis.annotations.Select;
@@ -48,4 +49,19 @@ public interface RegisterMapper extends BaseMapper<Registration> {
 
     //根据患者id删除状态是未挂号的条目
     void deleteInfo(Long currentPatientId);
+
+    //根据id查询银行账户余额
+    Double getBankById(PayDTO payDTO);
+
+    //患者缴费,根据支付方式在银行账户扣钱
+    void minusMoney(PayDTO payDTO);
+
+    //患者交给,在医保卡里扣钱
+    void minusCard(PayDTO payDTO);
+
+    //根据患者id和未支付的状态设置挂号单将要过期的时间
+    void setEndTime(Long patientId);
+
+    //根据挂号单id直接精确设置挂号单结束时间和状态
+    void setUnpaid(Integer registerId);
 }

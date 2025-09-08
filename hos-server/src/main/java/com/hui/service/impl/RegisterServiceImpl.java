@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hui.dto.DoctorPageQueryDTO;
+import com.hui.dto.PayDTO;
 import com.hui.dto.RegistrationDTO;
 import com.hui.dto.TimeDTO;
 import com.hui.entity.*;
@@ -11,6 +12,7 @@ import com.hui.mapper.CreateMapper;
 import com.hui.mapper.RegisterMapper;
 import com.hui.result.PageResult;
 import com.hui.service.RegisterService;
+import com.hui.vo.PayVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -119,6 +121,52 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
     @Override
     public void deleteInfo(Long currentPatientId) {
         registerMapper.deleteInfo(currentPatientId);
+    }
+
+    //患者缴费
+    @Override
+    public PayVO pay(PayDTO payDTO) {
+
+        //根据id查询银行账户或医保卡,两种方式不同
+        String paymentMethod = payDTO.getPaymentMethod();
+        String rawPaymentMethod=paymentMethod;
+        Double price = payDTO.getPrice();
+
+        PayVO payVO = new PayVO();
+        if(paymentMethod.equals("微信") || paymentMethod.equals("现金")){
+            //原价挂号,调用bank表
+
+            //将微信和现金转成数据库格式
+            if (paymentMethod.equals("微信")){
+                paymentMethod="wechat_pay";
+            }else {
+                paymentMethod="cash";
+            }
+            payDTO.setPaymentMethod(paymentMethod);
+
+            //先查询银行余额,判断是否足够
+            Double remain=registerMapper.getBankById(payDTO);
+            if (remain<price){
+                payVO.setDetail("余额不足,请更换缴费方式或充值后缴费");
+                throw new RuntimeException("余额不足");
+            }
+            //余额充足,在相应位置扣钱
+            registerMapper.minusMoney(payDTO);
+            //TODO:在患者个人界面的查询历史挂号记录
+            payVO.setDetail(rawPaymentMethod+"支付成功");
+
+            return payVO;
+            //返回成功信息
+        }else {
+            //医保卡支付,打折
+            price*=0.5;
+            payDTO.setPrice(price);
+            //在medical_card直接修改
+            registerMapper.minusCard(payDTO);
+            //TODO更改成功,在患者个人界面查询历史挂号记录,微信支付和医保卡支付所存的表和逻辑是一样的
+            payVO.setDetail("医保卡支付成功");
+            return payVO;
+        }
     }
 
 

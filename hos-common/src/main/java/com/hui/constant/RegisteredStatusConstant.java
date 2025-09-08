@@ -5,7 +5,7 @@ package com.hui.constant;
  * */
 public class RegisteredStatusConstant {
 
-    //未预约
+    //未顾好
     public static final Integer UN_REGISTERED = 0;
 
     //待叫号
@@ -22,6 +22,7 @@ public class RegisteredStatusConstant {
 
     //住院中
     public static final Integer IN_HOSPITAL = 5;
+
 
 
 }

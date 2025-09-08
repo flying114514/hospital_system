@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @TableName("orders")
 public class Registration {
     @TableId(type = IdType.AUTO)
+    private Integer id;//挂号单的id
     private Integer number;//挂号数
     private String patientName;
     private String age;

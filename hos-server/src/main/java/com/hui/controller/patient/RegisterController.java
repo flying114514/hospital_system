@@ -1,14 +1,14 @@
 package com.hui.controller.patient;
 
 import com.hui.constant.MessageConstant;
-import com.hui.dto.DoctorPageQueryDTO;
-import com.hui.dto.PatientBasicInfoDTO;
-import com.hui.dto.RegistrationDTO;
+import com.hui.dto.*;
 import com.hui.entity.*;
+import com.hui.mapper.RegisterMapper;
 import com.hui.result.PageResult;
 import com.hui.result.Result;
 import com.hui.service.CreateService;
 import com.hui.service.RegisterService;
+import com.hui.vo.PayVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +27,9 @@ public class RegisterController {
 
     @Autowired
     private CreateService createService;
+
+    @Autowired
+    private RegisterMapper registerMapper;
 
     //首先查询患者信息,如果有,展示用户信息,退出界面,没有才能建档
     @GetMapping
@@ -100,17 +103,51 @@ public class RegisterController {
 
     //患者选择完号后,展示所有挂号信息,如果前端传送的数据是确定,展示数据,如果是取消,删除条目
     @GetMapping("/all")
-    public Result<Registration> getAllInfo(HttpSession session,String word){
+    public Result<Registration> getAllInfo(HttpSession session,String word) {
         Long currentPatientId = (Long) session.getAttribute("currentPatientId");
-        if(word.equals("确定")){
-            Registration registration=registerService.getAllInfo(currentPatientId);
+        Registration registration;
+        if (word.equals("确定")) {
+            registration = registerService.getAllInfo(currentPatientId);
+            session.setAttribute("registerId", registration.getId());
+            session.setAttribute("payMoney", registration.getPrice());
             return Result.success(registration);
-        }else{registerService.deleteInfo(currentPatientId);
+        } else {
+            registerService.deleteInfo(currentPatientId);
             return Result.success();
         }
+
     }
 
-    //患者缴费
+    //患者缴费,微信/现金支付原价,医保卡支付打折
+    @PostMapping("/pay")
+    public Result<PayVO> pay(HttpSession session, PayDTO payDTO){
+
+        Long patientId = (Long) session.getAttribute("currentPatientId");
+
+        payDTO.setPatientId(Math.toIntExact(patientId));
+        payDTO.setPrice((double) session.getAttribute("payMoney"));
+
+        if(payDTO.getDetail().equals("确定")){//开始缴费
+            PayVO payVO=registerService.pay(payDTO);
+            return Result.success(payVO);
+        }else{
+            //患者取消支付,将挂号单的信息保存15分钟,状态设置为待支付,15分钟后状态设置为未挂号
+            //获取挂号单id
+            Integer registerId = (Integer) session.getAttribute("registerId");
+            SetUnpaidDTO.builder()
+                    .registerId(registerId)
+            //将挂号单的状态设置为待支付,根据挂号单id
+            registerMapper.setUnpaid(SetUnpaidDTO);
+
+            //将挂号单的信息保存15分钟
+            registerMapper.setEndTime(patientId);
+
+        }
+
+
+
+    }
+
 }
 
 

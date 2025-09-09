@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 /**
- * 患者取消挂号索要传递的对象
+ * 将状态设置为取消中对象
  * */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CancelOrderDTO {
-    private String detail;
+public class CancelIngDTO {
+    private Integer status;
     private Integer patientId;
-    private Integer Status;
-    private Integer registerId;
-    private Integer number;//要取消的号数
+    private Integer number;
 }

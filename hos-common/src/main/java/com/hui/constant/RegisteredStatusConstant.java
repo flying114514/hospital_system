@@ -26,6 +26,9 @@ public class RegisteredStatusConstant {
     //已超时
     public static final Integer OVER_TIME = 6;
 
+    //取消中
+    public static final Integer CANCELING = 7;
+
 
 
 }

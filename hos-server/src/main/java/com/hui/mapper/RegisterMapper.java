@@ -82,21 +82,24 @@ public interface RegisterMapper extends BaseMapper<Registration> {
     void setPrice(PayDTO payDTO);
 
     //患者取消挂号
-    CancelOrderVO cancelOrder(CancelOrderDTO cancelOrderDTO);
+    void cancelOrder(CancelIngDTO cancelingDTO);
 
     //获取想要取消的挂号单的结束时间
-    LocalDateTime getEndTime(CancelOrderDTO cancelOrderDTO);
+    LocalDateTime getPreTime(CancelIngDTO cancelingDTO);
 
     //先更改orders里的支付方式
     void setPaymentMethod(String paymentMethod);
 
     //从orders获取交的钱
-    @Select("select price from orders where id={#registerId}")
-    Double getMoney(Integer registerId);
+    @Select("select price from orders where number=#{number} and status=#{status}")
+    Double getMoney(CancelIngDTO cancelingDTO);
 
     //将退款返回给银行账户
     void returnBankMoney(ReturnMoneyDTO returnMoneyDTO);
 
     //将退款返回给医保卡
     void returnCardMoney(ReturnMoneyDTO returnMoneyDTO);
+
+    //将医生的号还回去
+    void returnDocNum(ReturnDocNumDTO returnDocNumDTO);
 }

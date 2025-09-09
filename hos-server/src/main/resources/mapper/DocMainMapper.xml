@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hui.mapper.DocMainMapper">
+    <insert id="register" useGeneratedKeys="true" keyProperty="doctorId" keyColumn="id">
+        insert into basic_doctor (name, id_card, password)
+        values (#{name}, #{idCard}, #{password})
+    </insert>
+    <insert id="addBasicInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into doctor_details (name)
+        values (#{name})
+    </insert>
+    <update id="insertDocId">
+        update doctor_details
+        set doctor_id = #{doctorId}
+        where id = #{id}
+    </update>
+    <update id="updatePassword">
+        update basic_doctor
+        set password = #{password}
+        where name = #{name}
+          and id_card = #{idCard}
+    </update>
+    <update id="setDetailInfo">
+        update doctor_details
+        set department_location = #{departmentLocation},
+            department          = #{department},
+            profile             = #{profile},
+            remain              = #{remain},
+            level               = #{level},
+            work_experience     = #{workExperience}
+        where doctor_id = #{doctorId}
+    </update>
+    <update id="setPriceByLevel">
+        update doctor_details
+        set price = #{price}
+        where doctor_id = #{doctorId}
+    </update>
+    <insert id="setBanInfo">
+        insert into time_details (name, doctor_id, begin_time, end_time, predict_time)
+        values (#{name}, #{doctorId}, #{beginTime}, #{endTime}, #{predictTime})
+    </insert>
+
+    <select id="getByIdCard" resultType="com.hui.vo.DocLoginVO">
+        select id, name, id_card, password
+        from basic_doctor
+        where id_card = #{idCard}
+    </select>
+    <select id="checkDoc" resultType="com.hui.entity.DocBasic">
+        select id, name, id_card
+        from basic_doctor
+        where name = #{name}
+          and id_card = #{idCard}
+    </select>
+    <select id="getDetailInfo" resultType="com.hui.entity.DetailInfo">
+        select department_location, name, department, profile, remain, level, work_experience
+        from doctor_details
+        where doctor_id = #{doctorId}
+    </select>
+    <select id="getBanInfo" resultType="com.hui.vo.BanInfoVO">
+        select  begin_time, end_time, predict_time
+        from time_details
+        where doctor_id = #{doctorId}
+        and begin_time &lt;= #{endTime}
+        and end_time &gt;= #{beginTime}
+    </select>
+
+</mapper>

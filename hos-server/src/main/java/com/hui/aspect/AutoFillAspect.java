@@ -33,7 +33,6 @@ public class AutoFillAspect {
     public void autoFill(JoinPoint joinPoint){//joinpoint:连接点,即目标方法
         log.info("自动填充");
         //获取当前被拦截的方法,如果时INSERT,修改两个,如果是UPDATE,修改四个
-        //TODO 新增一个出院时间,形式是UPDATE,只有出院需要修改就诊时间,别的都是新增,在医生点击完成后修改就诊时间为当时
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();//通过切入点获取签名,强转成方法签名
         AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);//获取方法上的注解对象
         OperationType operationType = autoFill.value();//获取注解中的值,即操作类型,也就是INSERT或者UPDATE
@@ -50,13 +49,13 @@ public class AutoFillAspect {
         LocalDateTime now = LocalDateTime.now();
         Long currentId = BaseContext.getCurrentId();
 
-        //TODO 新增和修改的逻辑待定
+
         //根据不同的操作类型进行赋值,通过对应的属性反射赋值
         if(operationType==OperationType.INSERT){//新增操作,4个字段
             try {//通过反射映射实体类的方法,获取实体类的set方法
                 //通过实体类,getDeclaredMethod方法,第一个参数是要获取的方法名,第二个方法是该方法的参数类型
                 Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
-                //TODO就诊时间
+
                 Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_Appointment_TIME, LocalDateTime.class);
 
                 //通过反射为对象赋值,invoke方法,第一个参数是对象,第二个参数是方法的参数

@@ -35,7 +35,7 @@ public interface RegisterService extends IService<Registration> {
     PayVO pay(PayDTO payDTO);
 
     //患者取消挂号
-    CancelOrderVO cancelOrder(CancelOrderDTO cancelOrderDTO);
+    CancelOrderVO cancelOrder(CancelIngDTO cancelingDTO);
 
     //将退款原路退回
     void returnMoney(ReturnMoneyDTO returnMoneyDTO);

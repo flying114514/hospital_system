@@ -8,7 +8,6 @@ import com.hui.result.PageResult;
 import com.hui.result.Result;
 import com.hui.service.CreateService;
 import com.hui.service.RegisterService;
-import com.hui.vo.CancelOrderVO;
 import com.hui.vo.PayVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +101,7 @@ public class RegisterController {
     @PostMapping("/getnumber")
     public Result<String> getNumber(HttpSession session, String number) {
         Long currentPatientId = (Long) session.getAttribute("currentPatientId");
+
         String word = registerService.getNumber(currentPatientId, number);
         return Result.success(word);
     }
@@ -110,7 +110,7 @@ public class RegisterController {
     @GetMapping("/all")
     public Result<Registration> getAllInfo(HttpSession session, String word) {
         Long currentPatientId = (Long) session.getAttribute("currentPatientId");
-        if(currentPatientId==null){
+        if (currentPatientId == null) {
             return Result.error("请先完成上述任务");
         }
         Registration registration;
@@ -135,20 +135,19 @@ public class RegisterController {
         String paymentMethod = payDTO.getPaymentMethod();
 
         //将支付方式传给session,传递的是中文
-        session.setAttribute("paymentMethod",paymentMethod);
+        session.setAttribute("paymentMethod", paymentMethod);
 
         //获取挂号单id
         Integer registerId = (Integer) session.getAttribute("registerId");
         payDTO.setRegisterId(registerId);
 
-        if(patientId==null){
+        if (patientId == null) {
             return Result.error("请先完成上述任务");
         }
         payDTO.setPatientId(Math.toIntExact(patientId));
 
         payDTO.setPatientId(Math.toIntExact(patientId));
         payDTO.setPrice((double) session.getAttribute("payMoney"));
-
 
 
         if (payDTO.getDetail().equals("确定")) {//开始缴费
@@ -160,7 +159,6 @@ public class RegisterController {
                     .id(registerId)
                     .createTime(LocalDateTime.now()).build();
             registerMapper.insertFullInfo(orderFull);
-            // TODO将来患者还是可以在个人主页查到,不要直接删掉
 
             return Result.success(payVO);
         } else {
@@ -172,42 +170,11 @@ public class RegisterController {
             //将挂号单的状态设置为待支付,根据挂号单id,并修改过期时间
             registerMapper.setUnpaid(setUnpaidDTO);
             //使用定时任务类,查询有没有已经超时的挂号记录,将挂号单的状态改为已过期
-            // TODO将来患者还是可以在个人主页查到,不要直接删掉
             return Result.success(new PayVO("取消支付成功,挂号单保存15分钟"));
         }
-
-
-        }
-    //患者取消挂号
-    @PostMapping("/cancel")
-    public Result<CancelOrderVO> cancelOrder(HttpSession session, CancelOrderDTO cancelOrderDTO){
-        Long patientId = (Long) session.getAttribute("currentPatientId");
-        cancelOrderDTO.setPatientId(Math.toIntExact(patientId));
-
-        Integer registerId = (Integer) session.getAttribute("registerId");
-        cancelOrderDTO.setRegisterId(registerId);
-
-        //删除数据
-        CancelOrderVO cancelOrderVO=registerService.cancelOrder(cancelOrderDTO);
-
-        String paymentMethod = session.getAttribute("paymentMethod").toString();
-
-        //从orders里获取money
-        Double money = registerMapper.getMoney(registerId);
-
-        ReturnMoneyDTO returnMoneyDTO = ReturnMoneyDTO.builder()
-                .paymentMethod(paymentMethod)
-                .money(money)
-                .patientId(Math.toIntExact(patientId)).build();
-        //患者取消挂号单后,将钱原路返回
-        registerService.returnMoney(returnMoneyDTO);
-
-        //将医生的号也还回去
-
-        return Result.success(cancelOrderVO);
-
-
     }
+
+
 
 }
 

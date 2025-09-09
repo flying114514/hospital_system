@@ -87,12 +87,18 @@
         set balance=balance+#{money}
         where patient_id= #{patientId}
     </update>
+    <update id="returnDocNum">
+        update hospital.time_details
+        set status=0
+        where number= #{number}
+    </update>
     <delete id="deleteInfo">
         delete from hospital.orders
         where patient_id=#{currentPatientId} and status=0
     </delete>
+
     <delete id="cancelOrder">
-        delete from hospital.orders where id= #{registerId}
+        delete from hospital.orders where number= #{number} and status=#{status}
     </delete>
 
 
@@ -136,7 +142,7 @@
         select balance from hospital.medical_card
         where patient_id= #{patientId}
     </select>
-    <select id="getEndTime" resultType="java.time.LocalDateTime">
-        select predict_time from hospital.orders where patient_id=#{patientId} and status=#{status}
+    <select id="getPreTime" resultType="java.time.LocalDateTime">
+        select predict_time from hospital.orders where number=#{number} and status=#{status}
     </select>
 </mapper>

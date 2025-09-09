@@ -198,15 +198,18 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //患者取消挂号
     @Override
-    public CancelOrderVO cancelOrder(CancelOrderDTO cancelOrderDTO) {
-        CancelOrderVO cancelOrderVO = null;
+    public CancelOrderVO cancelOrder(CancelIngDTO cancelingDTO) {
+        CancelOrderVO cancelOrderVO = new CancelOrderVO();
 
-        //判断当前时间距离预计就诊时间是否还有15分钟,只查询待叫号的挂号单
-        cancelOrderDTO.setStatus(RegisteredStatusConstant.WAIT_FOR_CALL);
+        //判断当前时间距离预计就诊时间是否还有15分钟,只查询取消中的挂号单
 
         //前端已经为我们传递的只可能是一个数据,返回的不可能是list
-        LocalDateTime time=registerMapper.getEndTime(cancelOrderDTO);
+        LocalDateTime time=registerMapper.getPreTime(cancelingDTO);
 
+        if(time==null){
+            cancelOrderVO.setDetail("未找到挂号单");
+            return cancelOrderVO;
+        }
 
         //在15分钟内,不可取消
         if (time.isAfter(LocalDateTime.now().plusMinutes(15))){
@@ -214,7 +217,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
             return cancelOrderVO;
         }
         //不在15分钟内,可以取消
-        registerMapper.cancelOrder(cancelOrderDTO);
+        registerMapper.cancelOrder(cancelingDTO);
         cancelOrderVO.setDetail("取消挂号单成功");
         return cancelOrderVO;
     }

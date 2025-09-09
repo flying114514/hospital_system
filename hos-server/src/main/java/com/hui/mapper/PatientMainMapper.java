@@ -8,7 +8,7 @@ import com.hui.vo.LoginVO;
 import com.hui.vo.MedicalCardVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Service;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface PatientMainMapper {
@@ -43,4 +43,12 @@ public interface PatientMainMapper {
 
     //查询历史挂号信息
     Page<GuaHistoryVO> selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO);
+
+    //根据挂单号获取支付方式
+    @Select("select payment_method from orders where number=#{number} and status=#{status}")
+    String getPaymentMethod(CancelIngDTO cancelingDTO);
+
+    //将状态设置为取消中
+    @Update("update orders set status=#{status} where number=#{number}")
+    void setStatus(CancelIngDTO cancelingDTO);
 }

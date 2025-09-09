@@ -20,5 +20,6 @@ public class GuaHistoryVO {
     private String paymentMethod;
     private String level;
     private Integer status;
+    private Integer number;
 
 }

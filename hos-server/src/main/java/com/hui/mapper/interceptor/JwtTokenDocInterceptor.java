@@ -48,7 +48,7 @@ public class JwtTokenDocInterceptor implements HandlerInterceptor {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getDocSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.DOC_ID).toString());
-            log.info("当前医生id：", empId);
+            log.info("当前医生id：{}", empId);
 
             //将医生id设置到ThreadLocal中,重点
             BaseContext.setCurrentId(empId);

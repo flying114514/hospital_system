@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 /**
- * 患者取消挂号索要传递的对象
+ *患者退款所需对象
  * */
-@Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class CancelOrderDTO {
-    private String Detail;
+@NoArgsConstructor
+@Data
+public class ReturnMoneyDTO {
+    private String paymentMethod;
+    private Double money;
     private Integer patientId;
-    private Integer Status;
-    private Integer registerId;
 }

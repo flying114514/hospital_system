@@ -110,6 +110,9 @@ public class RegisterController {
     @GetMapping("/all")
     public Result<Registration> getAllInfo(HttpSession session, String word) {
         Long currentPatientId = (Long) session.getAttribute("currentPatientId");
+        if(currentPatientId==null){
+            return Result.error("请先完成上述任务");
+        }
         Registration registration;
         if (word.equals("确定")) {
             registration = registerService.getAllInfo(currentPatientId);
@@ -128,20 +131,32 @@ public class RegisterController {
     public Result<PayVO> pay(HttpSession session, PayDTO payDTO) {
 
         Long patientId = (Long) session.getAttribute("currentPatientId");
+
+        String paymentMethod = payDTO.getPaymentMethod();
+
+        //将支付方式传给session,传递的是中文
+        session.setAttribute("paymentMethod",paymentMethod);
+
+        //获取挂号单id
+        Integer registerId = (Integer) session.getAttribute("registerId");
+        payDTO.setRegisterId(registerId);
+
+        if(patientId==null){
+            return Result.error("请先完成上述任务");
+        }
         payDTO.setPatientId(Math.toIntExact(patientId));
 
         payDTO.setPatientId(Math.toIntExact(patientId));
         payDTO.setPrice((double) session.getAttribute("payMoney"));
 
-        //获取挂号单id
-        Integer registerId = (Integer) session.getAttribute("registerId");
+
 
         if (payDTO.getDetail().equals("确定")) {//开始缴费
             PayVO payVO = registerService.pay(payDTO);
 
             //支付成功向orders里补充剩余的数据
             OrderFull orderFull = OrderFull.builder()
-                    .paymentMethod(payDTO.getPaymentMethod())
+                    .paymentMethod(paymentMethod)
                     .id(registerId)
                     .createTime(LocalDateTime.now()).build();
             registerMapper.insertFullInfo(orderFull);
@@ -168,7 +183,27 @@ public class RegisterController {
     public Result<CancelOrderVO> cancelOrder(HttpSession session, CancelOrderDTO cancelOrderDTO){
         Long patientId = (Long) session.getAttribute("currentPatientId");
         cancelOrderDTO.setPatientId(Math.toIntExact(patientId));
+
+        Integer registerId = (Integer) session.getAttribute("registerId");
+        cancelOrderDTO.setRegisterId(registerId);
+
+        //删除数据
         CancelOrderVO cancelOrderVO=registerService.cancelOrder(cancelOrderDTO);
+
+        String paymentMethod = session.getAttribute("paymentMethod").toString();
+
+        //从orders里获取money
+        Double money = registerMapper.getMoney(registerId);
+
+        ReturnMoneyDTO returnMoneyDTO = ReturnMoneyDTO.builder()
+                .paymentMethod(paymentMethod)
+                .money(money)
+                .patientId(Math.toIntExact(patientId)).build();
+        //患者取消挂号单后,将钱原路返回
+        registerService.returnMoney(returnMoneyDTO);
+
+        //将医生的号也还回去
+
         return Result.success(cancelOrderVO);
 
 

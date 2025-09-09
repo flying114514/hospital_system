@@ -65,12 +65,27 @@
     <update id="updateStatus">
         update hospital.orders
         set status=#{status}
-        where patient_id=#{id} and status=0
+        where id=#{registerId}
     </update>
     <update id="setPrice">
         update hospital.orders
-        set price=#{price}
-        where patient_id= #{patientId} and payment_method=#{detail}
+        set price=#{price} ,payment_method=#{detail}
+        where id=#{registerId}
+    </update>
+    <update id="setPaymentMethod">
+        update hospital.orders
+        set payment_method= #{paymentMethod}
+        where patient_id= #{patientId}
+    </update>
+    <update id="returnBankMoney">
+        update hospital.bank
+        set ${paymentMethod}=${paymentMethod}+#{money}
+        where patient_id= #{patientId}
+    </update>
+    <update id="returnCardMoney">
+        update hospital.medical_card
+        set balance=balance+#{money}
+        where patient_id= #{patientId}
     </update>
     <delete id="deleteInfo">
         delete from hospital.orders
@@ -122,6 +137,6 @@
         where patient_id= #{patientId}
     </select>
     <select id="getEndTime" resultType="java.time.LocalDateTime">
-        select end_time from hospital.orders where patient_id=#{patientId} and status=#{status}
+        select predict_time from hospital.orders where patient_id=#{patientId} and status=#{status}
     </select>
 </mapper>

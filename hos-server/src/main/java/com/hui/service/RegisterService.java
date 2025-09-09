@@ -1,10 +1,7 @@
 package com.hui.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.hui.dto.CancelOrderDTO;
-import com.hui.dto.DoctorPageQueryDTO;
-import com.hui.dto.PayDTO;
-import com.hui.dto.RegistrationDTO;
+import com.hui.dto.*;
 import com.hui.entity.DepartmentList;
 import com.hui.entity.PageTime;
 import com.hui.entity.Registration;
@@ -39,4 +36,7 @@ public interface RegisterService extends IService<Registration> {
 
     //患者取消挂号
     CancelOrderVO cancelOrder(CancelOrderDTO cancelOrderDTO);
+
+    //将退款原路退回
+    void returnMoney(ReturnMoneyDTO returnMoneyDTO);
 }

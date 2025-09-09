@@ -17,4 +17,5 @@ public class PayDTO {
     private String detail;
     private Double price;//要交的钱
     private Integer patientId;
+    private Integer registerId;
 }

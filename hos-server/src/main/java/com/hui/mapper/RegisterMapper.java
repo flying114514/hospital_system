@@ -5,7 +5,6 @@ import com.github.pagehelper.Page;
 import com.hui.dto.*;
 import com.hui.entity.*;
 import com.hui.vo.CancelOrderVO;
-import com.hui.vo.EndTimeVO;
 import com.hui.vo.OverTimeVO;
 import org.apache.ibatis.annotations.Select;
 
@@ -80,11 +79,24 @@ public interface RegisterMapper extends BaseMapper<Registration> {
     Double getCardById(PayDTO payDTO);
 
     //用医保卡支付,将orders里的price改为一半
-    void setPrice(PayDTO payDTO,String detail);
+    void setPrice(PayDTO payDTO);
 
     //患者取消挂号
     CancelOrderVO cancelOrder(CancelOrderDTO cancelOrderDTO);
 
     //获取想要取消的挂号单的结束时间
     LocalDateTime getEndTime(CancelOrderDTO cancelOrderDTO);
+
+    //先更改orders里的支付方式
+    void setPaymentMethod(String paymentMethod);
+
+    //从orders获取交的钱
+    @Select("select price from orders where id={#registerId}")
+    Double getMoney(Integer registerId);
+
+    //将退款返回给银行账户
+    void returnBankMoney(ReturnMoneyDTO returnMoneyDTO);
+
+    //将退款返回给医保卡
+    void returnCardMoney(ReturnMoneyDTO returnMoneyDTO);
 }

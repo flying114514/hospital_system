@@ -134,6 +134,8 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
         PayVO payVO = new PayVO();
         Double remain;
+
+        Integer registerId = payDTO.getRegisterId();
         if(paymentMethod.equals("微信") || paymentMethod.equals("现金")){
             //原价挂号,调用bank表
 
@@ -156,6 +158,14 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
             registerMapper.minusMoney(payDTO);
 
         }else {
+
+            //判断有没有医保卡
+
+
+            if (registerMapper.getCardById(payDTO)==null){
+                payVO.setDetail("没有医保卡,请先创建医保卡");
+                return payVO;
+            }
             //医保卡支付,打折
             price *= 0.5;
             payDTO.setPrice(price);
@@ -169,14 +179,14 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
             //在medical_card直接修改
             registerMapper.minusCard(payDTO);
 
-            String detail="医保卡";
-            //用医保卡交钱,修改orders里的price
-            registerMapper.setPrice(payDTO,detail);
+            payDTO.setDetail("医保卡");
+            //用医保卡交钱,修改orders里的price,直接根据registerId
+            registerMapper.setPrice(payDTO);
         }
 
             //更改挂号单状态为待叫号
             UpdateStatus updateStatus = UpdateStatus.builder()
-                    .id(Math.toIntExact(payDTO.getPatientId())).build();
+                    .registerId(registerId).build();
             registerMapper.updateStatus(updateStatus);
 
             payVO.setDetail(rawPaymentMethod+"支付成功");
@@ -197,6 +207,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
         //前端已经为我们传递的只可能是一个数据,返回的不可能是list
         LocalDateTime time=registerMapper.getEndTime(cancelOrderDTO);
 
+
         //在15分钟内,不可取消
         if (time.isAfter(LocalDateTime.now().plusMinutes(15))){
             cancelOrderVO.setDetail("距离预计就诊时间不足15分钟,取消挂号失败");
@@ -206,6 +217,17 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
         registerMapper.cancelOrder(cancelOrderDTO);
         cancelOrderVO.setDetail("取消挂号单成功");
         return cancelOrderVO;
+    }
+
+    //将退款原路退回
+    @Override
+    public void returnMoney(ReturnMoneyDTO returnMoneyDTO) {
+        String paymentMethod = returnMoneyDTO.getPaymentMethod();
+        if(paymentMethod.equals("现金") || paymentMethod.equals("微信")){
+            registerMapper.returnBankMoney(returnMoneyDTO);
+        }else{
+            registerMapper.returnCardMoney(returnMoneyDTO);
+        }
     }
 
 

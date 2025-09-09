@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class UpdateStatus {
-    private Integer id;
+    private Integer registerId;
     private final Integer status= RegisteredStatusConstant.WAIT_FOR_CALL;
 }

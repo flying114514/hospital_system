@@ -51,4 +51,8 @@ public interface PatientMainMapper {
     //将状态设置为取消中
     @Update("update orders set status=#{status} where number=#{number}")
     void setStatus(CancelIngDTO cancelingDTO);
+
+    //见状态改回来
+    @Update("update orders set status=#{status} where number=#{number}")
+    void resrtStstus(CancelIngDTO cancelingDTO);
 }

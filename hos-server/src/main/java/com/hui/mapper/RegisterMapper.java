@@ -102,4 +102,8 @@ public interface RegisterMapper extends BaseMapper<Registration> {
 
     //将医生的号还回去
     void returnDocNum(ReturnDocNumDTO returnDocNumDTO);
+
+    //根据号数获取predictTime
+    @Select("select predict_time from time_details where number=#{number}")
+    String getPredictTime(String number);
 }

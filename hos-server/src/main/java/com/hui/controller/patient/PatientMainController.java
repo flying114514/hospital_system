@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,7 +108,7 @@ public class PatientMainController {
     }
     //患者取消挂号
     @PostMapping("/cancel")
-    public Result<CancelOrderVO> cancelOrder(HttpSession session, CancelOrderDTO cancelOrderDTO){
+    public Result<CancelOrderVO> cancelOrder(CancelOrderDTO cancelOrderDTO){
 
         Long patientId = BaseContext.getCurrentId();
         if (patientId==null){
@@ -131,6 +132,16 @@ public class PatientMainController {
         //将order状态设置为取消中
         patientMainMapper.setStatus(cancelingDTO);
 
+        //检查时间
+        CancelOrderVO cancelOrderVO=checkTime(cancelingDTO);
+        if(cancelOrderVO!=null){
+            //将状态改回来
+            cancelingDTO.setStatus(RegisteredStatusConstant.WAIT_FOR_CALL);
+            patientMainMapper.resrtStstus(cancelingDTO);
+            return Result.success(cancelOrderVO);
+        }
+
+
         //删除前先把支付方式获取出来
         String paymentMethod=patientMainMapper.getPaymentMethod(cancelingDTO);
         if(paymentMethod==null){
@@ -140,6 +151,9 @@ public class PatientMainController {
         //从orders里获取money
         Double money = registerMapper.getMoney(cancelingDTO);
 
+        if(paymentMethod.equals("现金")){
+            paymentMethod="cash";
+        }
         ReturnMoneyDTO returnMoneyDTO = ReturnMoneyDTO.builder()
                 .paymentMethod(paymentMethod)
                 .money(money)
@@ -153,9 +167,29 @@ public class PatientMainController {
         registerMapper.returnDocNum(returnDocNumDTO);
 
         //删除数据
-        CancelOrderVO cancelOrderVO=registerService.cancelOrder(cancelingDTO);
+        cancelOrderVO=registerService.cancelOrder(cancelingDTO);
 
         return Result.success(cancelOrderVO);
+
+    }
+    public CancelOrderVO checkTime(CancelIngDTO cancelingDTO){
+        //判断当前时间距离预计就诊时间是否还有15分钟,只查询取消中的挂号单
+
+        CancelOrderVO cancelOrderVO = new CancelOrderVO();
+        //前端已经为我们传递的只可能是一个数据,返回的不可能是list
+        LocalDateTime time=registerMapper.getPreTime(cancelingDTO);
+
+        if(time==null){
+            cancelOrderVO.setDetail("未找到挂号单");
+            return cancelOrderVO;
+        }
+
+        //在15分钟内,不可取消
+        if (time.isBefore(LocalDateTime.now().plusMinutes(15)) && time.isAfter(LocalDateTime.now())){
+            cancelOrderVO.setDetail("距离预计就诊时间不足15分钟,取消挂号失败");
+            return cancelOrderVO;
+        }
+        return null;
 
     }
 

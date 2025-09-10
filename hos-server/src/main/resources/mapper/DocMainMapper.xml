@@ -58,7 +58,7 @@
         where doctor_id = #{doctorId}
     </select>
     <select id="getBanInfo" resultType="com.hui.vo.BanInfoVO">
-        select  begin_time, end_time, predict_time
+        select  number, begin_time, end_time, predict_time
         from time_details
         where doctor_id = #{doctorId}
         and begin_time &lt;= #{endTime}

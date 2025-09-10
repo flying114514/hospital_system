@@ -79,11 +79,14 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
         //能选到的号都是没人选的,可以选择的,不需要检验
         //直接将该数存入患者挂号单中,并且其他患者挂号是将查不到这个号
 
+        //获取predictTime
+        String predictTime = registerMapper.getPredictTime(number);
+
         TimeDTO timeDTO = TimeDTO.builder()
                 .currentPatientId(String.valueOf(currentPatientId))
                 .Status("0")
                 .number(number)
-                .predictTime(String.valueOf(LocalDateTime.now().plusMinutes(15)))
+                .predictTime(predictTime)
                 .build();
 
         //将该号存入患者挂号单
@@ -200,22 +203,6 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
     @Override
     public CancelOrderVO cancelOrder(CancelIngDTO cancelingDTO) {
         CancelOrderVO cancelOrderVO = new CancelOrderVO();
-
-        //判断当前时间距离预计就诊时间是否还有15分钟,只查询取消中的挂号单
-
-        //前端已经为我们传递的只可能是一个数据,返回的不可能是list
-        LocalDateTime time=registerMapper.getPreTime(cancelingDTO);
-
-        if(time==null){
-            cancelOrderVO.setDetail("未找到挂号单");
-            return cancelOrderVO;
-        }
-
-        //在15分钟内,不可取消
-        if (time.isAfter(LocalDateTime.now().plusMinutes(15))){
-            cancelOrderVO.setDetail("距离预计就诊时间不足15分钟,取消挂号失败");
-            return cancelOrderVO;
-        }
         //不在15分钟内,可以取消
         registerMapper.cancelOrder(cancelingDTO);
         cancelOrderVO.setDetail("取消挂号单成功");

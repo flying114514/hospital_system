@@ -4,9 +4,7 @@ import com.hui.dto.*;
 import com.hui.entity.DetailInfo;
 import com.hui.entity.DocLoginResult;
 import com.hui.result.PageResult;
-import com.hui.vo.DocRegisterVO;
-import com.hui.vo.SetBanVO;
-import com.hui.vo.SetInfoVO;
+import com.hui.vo.*;
 
 public interface DocMainService {
     //医生登录功能
@@ -29,4 +27,13 @@ public interface DocMainService {
 
     //分页查询排班信息
     PageResult getBanInfo(TimeInfoDTO timeInfoDTO);
+
+    //定时删除排班信息
+    void deleteSchedulesBefore(DeleteTimeDTO deleteTimeDTO);
+
+    //医生叫号功能
+    CallNumberVO callNumber(CallNumberDTO callNumberDTO);
+
+    //医生接诊功能
+    CasesVO patientArrived(CasesDTO casesDTO);
 }

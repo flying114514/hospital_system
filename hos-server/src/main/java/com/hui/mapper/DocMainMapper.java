@@ -2,15 +2,18 @@ package com.hui.mapper;
 
 import com.github.pagehelper.Page;
 import com.hui.dto.*;
+import com.hui.entity.CallName;
+import com.hui.entity.Cases;
 import com.hui.entity.DetailInfo;
 import com.hui.entity.DocBasic;
-import com.hui.result.PageResult;
 import com.hui.vo.BanInfoVO;
 import com.hui.vo.DocLoginVO;
-import com.hui.vo.SetInfoVO;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
+
 
 @Mapper
 public interface DocMainMapper {
@@ -38,9 +41,6 @@ public interface DocMainMapper {
     //医生根据docid查询个人信息
     DetailInfo getDetailInfo(Long doctorId);
 
-    //医生设置排班信息
-    void setBanInfo(BanInfoDTO banInfoDTO);
-
     //根据级别设置价格
     void setPriceByLevel(PriceDTO priceDTO);
 
@@ -54,4 +54,33 @@ public interface DocMainMapper {
 
     //分页查询排班信息
     Page<BanInfoVO> getBanInfo(TimeInfoDTO timeInfoDTO);
+
+    //添加排班表信息
+    void setInfo(BanInfoDTO banInfoDTO);
+
+    //每天两点删除一周前的信息
+    void deleteSchedulesBefore(DeleteTimeDTO deleteTimeDTO);
+
+    //批量添加排班号信息
+    void batchSetBanInfo(List<BanInfoDTO> banInfoList);
+
+    //医生叫号
+    @Select("select patient_name,id from orders where number=#{number} and status=1")
+    CallName getPatientInfo(CallNumberDTO callNumberDTO);
+
+    //改变叫号状态
+    @Update("update orders set status=#{status},call_time=#{callTime} where id=#{id}")
+    void setStatus(CallDTO callDTO);
+
+    //将当前患者状态改为就诊中
+    void changeStatus(Integer number);
+
+    //查询患者信息
+    Cases getCases(Integer number);
+
+    //添加病例
+    void insertCases(Cases cases);
+
+    //查询患者病例是否存在
+    String checkCases(Integer number);
 }

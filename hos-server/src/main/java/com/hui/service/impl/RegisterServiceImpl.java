@@ -15,6 +15,7 @@ import com.hui.vo.CancelOrderVO;
 import com.hui.vo.PayVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //患者挂号
     @Override
+    @Transactional
     public List<DepartmentList> register(RegistrationDTO registrationDTO,Long currentPatientId) {
         List<DepartmentList> departmentLists = registerMapper.getDepartments();
         return departmentLists;//返回科室名列表
@@ -37,6 +39,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //根据科室名称模糊分页查询相关信息
     @Override
+    @Transactional
     public PageResult pageDoctor(DoctorPageQueryDTO doctorPageQueryDTO) {
         int pageSize = doctorPageQueryDTO.getPageSize();
         int pageNum = doctorPageQueryDTO.getPage();
@@ -47,6 +50,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //根据医生姓名获取详细信息
     @Override
+    @Transactional
     public PageTime selectTime(TimePageQueryDTO timePageQueryDTO, Long currentPatientId) {
         String name = timePageQueryDTO.getName();
 
@@ -74,6 +78,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //患者点击取号,传入挂号数,医生对应总余浩减一,挂号数传入数据库
     @Override//number是传入的number
+    @Transactional
     public String getNumber(Long currentPatientId, String number) {
         //不用判断挂号数是否在可选的数内,因为前端已经判断过了
         //能选到的号都是没人选的,可以选择的,不需要检验
@@ -102,8 +107,11 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
             //修改患者点击科室后出现的医生取号列表
 
+            //根据号数获取workId
+            Integer workId=registerMapper.getWorkId(number);
+
             //更改doctor_details表,将余数减一
-            registerMapper.updateDoctorRemain(doctorId);
+            registerMapper.updateDoctorRemain(Long.valueOf(workId));
             return "取得号:" + number;
         }
 
@@ -114,6 +122,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //获取用户全部详细信息
     @Override
+    @Transactional
     public Registration getAllInfo(Long currentPatientId) {
         Registration registration=registerMapper.getAllInfo(currentPatientId);
 
@@ -122,12 +131,14 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //根据患者id删除数据
     @Override
+    @Transactional
     public void deleteInfo(Long currentPatientId) {
         registerMapper.deleteInfo(currentPatientId);
     }
 
     //患者缴费
     @Override
+    @Transactional
     public PayVO pay(PayDTO payDTO) {
 
         //根据id查询银行账户或医保卡,两种方式不同
@@ -201,6 +212,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //患者取消挂号
     @Override
+    @Transactional
     public CancelOrderVO cancelOrder(CancelIngDTO cancelingDTO) {
         CancelOrderVO cancelOrderVO = new CancelOrderVO();
         //不在15分钟内,可以取消
@@ -211,6 +223,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
 
     //将退款原路退回
     @Override
+    @Transactional
     public void returnMoney(ReturnMoneyDTO returnMoneyDTO) {
         String paymentMethod = returnMoneyDTO.getPaymentMethod();
         if(paymentMethod.equals("现金") || paymentMethod.equals("微信")){

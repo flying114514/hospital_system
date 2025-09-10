@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
 import com.hui.dto.*;
 import com.hui.entity.*;
-import com.hui.vo.CancelOrderVO;
 import com.hui.vo.OverTimeVO;
 import org.apache.ibatis.annotations.Select;
 
@@ -43,7 +42,7 @@ public interface RegisterMapper extends BaseMapper<Registration> {
     void updateDoctorTime(Long doctorId, String number);
 
     //根据医生id,将余数减一
-    void updateDoctorRemain(Long doctorId);
+    void updateDoctorRemain(Long workId);
 
     //根据患者id查询详细信息
     Registration getAllInfo(Long currentPatientId);
@@ -106,4 +105,14 @@ public interface RegisterMapper extends BaseMapper<Registration> {
     //根据号数获取predictTime
     @Select("select predict_time from time_details where number=#{number}")
     String getPredictTime(String number);
+
+    //根据号数获取workId
+    @Select("select work_id from time_details where number=#{number}")
+    Integer getWorkId(String number);
+
+    //查询正在呼叫但未到号的挂号单
+    List<OverTimeVO> getCalledButNotArrivedOrders(Integer status, LocalDateTime now);
+
+    //更新挂号单状态为失败
+    void updateFail(OverTimeVO order);
 }

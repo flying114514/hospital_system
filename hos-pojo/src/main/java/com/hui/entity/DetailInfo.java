@@ -18,7 +18,6 @@ public class DetailInfo {
     private String name;
     private String department;
     private String profile;
-    private Integer remain;
     private String level;
     private String workExperience;
     private Integer doctorId;

@@ -11,6 +11,7 @@ import com.hui.mapper.CreateMapper;
 import com.hui.service.CreateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +29,7 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
      * 根据患者身份证补充信息,并新增患者
      * */
     @Override
+    @Transactional
     public PatientBasicInfo insertPatientInfo(PatientBasicInfoDTO patientBasicInfoDTO) {
 
         String idCard = patientBasicInfoDTO.getIdCard();
@@ -74,6 +76,7 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
      * @param idCard 身份证号
      * @return 年龄
      */
+    @Transactional
     private Integer calculateAgeFromIdCard(String idCard) {
         try {
             String birthDateStr=idCard.substring(6, 14);

@@ -11,12 +11,9 @@ import com.hui.result.PageResult;
 import com.hui.result.Result;
 import com.hui.service.DocMainService;
 import com.hui.utils.JwtUtil;
-import com.hui.vo.DocRegisterVO;
-import com.hui.vo.SetBanVO;
-import com.hui.vo.SetInfoVO;
+import com.hui.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -115,6 +112,19 @@ public class DoctorMainController {
         PageResult pageResult=docMainService.getBanInfo(timeInfoDTO);
         return Result.success(pageResult);
     }
-    //TODO余浩相关信息
+
+    //医生叫号
+    @PostMapping("/callNumber")
+    public Result<CallNumberVO> callNumber(CallNumberDTO callNumberDTO){
+        CallNumberVO callNumberVO=docMainService.callNumber(callNumberDTO);
+        return Result.success(callNumberVO);
+    }
+
+    //患者就诊
+    @PostMapping("/callNumber/case")
+    public Result<CasesVO> patientArrived(CasesDTO casesDTO){
+        CasesVO casesVO=docMainService.patientArrived(casesDTO);
+        return Result.success(casesVO);
+    }
 
 }

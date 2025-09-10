@@ -26,4 +26,6 @@ public class BanInfoDTO {
     private LocalDateTime predictTime;
     private String level;
     private Integer status;
+    private Integer remain;
+    private Integer workId;
 }

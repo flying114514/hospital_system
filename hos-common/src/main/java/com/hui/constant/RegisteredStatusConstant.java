@@ -11,7 +11,7 @@ public class RegisteredStatusConstant {
     //待叫号
     public static final Integer WAIT_FOR_CALL = 1;
 
-    //诊断中
+    //就诊中
     public static final Integer DIAGNOSIS = 2;
 
     //失约
@@ -28,6 +28,9 @@ public class RegisteredStatusConstant {
 
     //取消中
     public static final Integer CANCELING = 7;
+
+    //叫号中
+    public static final Integer CALLING = 8;
 
 
 

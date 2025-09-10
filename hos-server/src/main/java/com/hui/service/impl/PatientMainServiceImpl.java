@@ -18,6 +18,7 @@ import com.hui.vo.MedicalCardVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,7 @@ public class PatientMainServiceImpl implements PatientMainService {
 
     //根据患者姓名检查密码
     @Override
+    @Transactional
     public LoginVO checkPassword(LoginDTO loginDTO) {
         String password = loginDTO.getPassword();
         //1、根据姓名查询数据库中的数据
@@ -59,6 +61,7 @@ public class PatientMainServiceImpl implements PatientMainService {
 
     //查询余额是否足够
     @Override
+    @Transactional
     public ResultDetail checkMoney(RechargeDTO rechargeDTO) {
         Long id=BaseContext.getCurrentId();
         Double money = rechargeDTO.getMoney();//要存的钱
@@ -101,6 +104,7 @@ public class PatientMainServiceImpl implements PatientMainService {
 
     //查询时间区间内的充值记录
     @Override
+    @Transactional
     public PageResult selectPayHistory(PayHistoryPageDTO payHistoryPageDTO) {
         Integer pageSize = payHistoryPageDTO.getPageSize();
         Integer pageNum = payHistoryPageDTO.getPage();
@@ -112,6 +116,7 @@ public class PatientMainServiceImpl implements PatientMainService {
 
     //查询患者医保卡信息
     @Override
+    @Transactional
     public MedicalCardVO checkCard(MedicalCardDTO medicalCardDTO) {
         Integer patientId = medicalCardDTO.getId();
         //根据id查询医保卡
@@ -136,6 +141,7 @@ public class PatientMainServiceImpl implements PatientMainService {
 
     //查询患者历史挂号数据
     @Override
+    @Transactional
     public PageResult selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO) {
 
         Integer pageSize = guaHistoryPageDTO.getPageSize();

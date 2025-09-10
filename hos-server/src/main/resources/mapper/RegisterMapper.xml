@@ -38,10 +38,10 @@
         </where>
     </update>
     <update id="updateDoctorRemain">
-        update hospital.doctor_details
+        update hospital.work_time
         set remain=remain-1
         <where>
-            doctor_id=#{doctorId}
+            work_id=#{workId}
         </where>
     </update>
     <update id="minusMoney">
@@ -91,6 +91,11 @@
         update hospital.time_details
         set status=0
         where number= #{number}
+    </update>
+    <update id="updateFail">
+        update hospital.orders
+        set status=#{status}
+        where id= #{id}
     </update>
     <delete id="deleteInfo">
         delete from hospital.orders
@@ -144,5 +149,8 @@
     </select>
     <select id="getPreTime" resultType="java.time.LocalDateTime">
         select predict_time from hospital.orders where number=#{number} and status=#{status}
+    </select>
+    <select id="getCalledButNotArrivedOrders" resultType="com.hui.vo.OverTimeVO">
+        select id,status from hospital.orders where status=#{status} and call_time &lt; #{now}
     </select>
 </mapper>

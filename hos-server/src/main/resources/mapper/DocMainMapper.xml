@@ -26,7 +26,6 @@
         set department_location = #{departmentLocation},
             department          = #{department},
             profile             = #{profile},
-            remain              = #{remain},
             level               = #{level},
             work_experience     = #{workExperience}
         where doctor_id = #{doctorId}
@@ -36,9 +35,32 @@
         set price = #{price}
         where doctor_id = #{doctorId}
     </update>
-    <insert id="setBanInfo">
-        insert into time_details (name, doctor_id, begin_time, end_time, predict_time)
-        values (#{name}, #{doctorId}, #{beginTime}, #{endTime}, #{predictTime})
+    <update id="changeStatus">
+        update orders
+        set status=2
+        where status = 8
+          and number = #{number}
+    </update>
+    <delete id="deleteSchedulesBefore">
+        delete
+        from work_time
+        where doctor_id = #{doctorId}
+          and begin_time &lt;= #{expiredDate}
+    </delete>
+    <insert id="setInfo" useGeneratedKeys="true" keyColumn="work_id" keyProperty="workId">
+        insert into work_time (name, doctor_id, begin_time, end_time, predict_time, remain)
+        values (#{name}, #{doctorId}, #{beginTime}, #{endTime}, #{predictTime}, #{remain})
+    </insert>
+    <insert id="batchSetBanInfo">
+        insert into time_details (name, doctor_id, begin_time, end_time, predict_time,work_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name}, #{item.doctorId}, #{item.beginTime}, #{item.endTime}, #{item.predictTime}, #{item.workId})
+        </foreach>
+    </insert>
+    <insert id="insertCases">
+        insert into cases (patient_id, patient_name, doctor_name, doctor_id, cases, create_time)
+        values (#{patientId}, #{patientName}, #{doctorName}, #{doctorId}, #{cases}, #{createTime})
     </insert>
 
     <select id="getByIdCard" resultType="com.hui.vo.DocLoginVO">
@@ -53,16 +75,28 @@
           and id_card = #{idCard}
     </select>
     <select id="getDetailInfo" resultType="com.hui.entity.DetailInfo">
-        select department_location, name, department, profile, remain, level, work_experience
+        select department_location, name, department, profile, level, work_experience
         from doctor_details
         where doctor_id = #{doctorId}
     </select>
     <select id="getBanInfo" resultType="com.hui.vo.BanInfoVO">
-        select  number, begin_time, end_time, predict_time
-        from time_details
+        select begin_time, end_time, predict_time
+        from work_time
         where doctor_id = #{doctorId}
-        and begin_time &lt;= #{endTime}
-        and end_time &gt;= #{beginTime}
+          and begin_time &lt;= #{endTime}
+          and end_time &gt;= #{beginTime}
+    </select>
+    <select id="getCases" resultType="com.hui.entity.Cases">
+        select patient_name, patient_id, doctor_name, doctor_id
+        from orders
+        where number = #{number}
+          and status = 2
+    </select>
+    <select id="checkCases" resultType="java.lang.String">
+        select patient_name
+        from orders
+        where status = 8
+          and number = #{number}
     </select>
 
 </mapper>

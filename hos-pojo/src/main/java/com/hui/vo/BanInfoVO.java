@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class BanInfoVO {
-    private Integer number;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime beginTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

@@ -12,7 +12,9 @@ import com.hui.exception.PasswordErrorException;
 import com.hui.mapper.DocMainMapper;
 import com.hui.result.PageResult;
 import com.hui.service.DocMainService;
+import com.hui.service.ManagerService;
 import com.hui.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class DocMainServiceImpl implements DocMainService {
 
     @Autowired
@@ -31,8 +34,12 @@ public class DocMainServiceImpl implements DocMainService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private DocMainService docMainService;
+
+    @Autowired
+    private ManagerServiceImpl managerServiceImpl;
 
     //医生登录功能
     @Override
@@ -179,6 +186,9 @@ public class DocMainServiceImpl implements DocMainService {
         docMainMapper.batchSetBanInfo(banInfoList);
 
         setBanVO.setDetail("设置排班成功");
+        // 排班信息变更后，清除缓存
+        managerServiceImpl.clearScheduleCache();
+        log.info("添加排班信息成功，已清除相关缓存");
         return setBanVO;
     }
 

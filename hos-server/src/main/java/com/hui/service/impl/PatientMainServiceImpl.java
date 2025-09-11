@@ -12,11 +12,13 @@ import com.hui.exception.PasswordErrorException;
 import com.hui.mapper.PatientMainMapper;
 import com.hui.result.PageResult;
 import com.hui.service.PatientMainService;
-import com.hui.vo.AllTimeVO;
 import com.hui.vo.GuaHistoryVO;
 import com.hui.vo.LoginVO;
 import com.hui.vo.MedicalCardVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class PatientMainServiceImpl implements PatientMainService {
 
     @Autowired
@@ -101,12 +104,16 @@ public class PatientMainServiceImpl implements PatientMainService {
                 .build();
         patientMainMapper.insertPay(payHistoryDTO);
         result="充值"+money+"成功";
+
+        // 清除该患者的缴费历史缓存
+        clearPatientHistoryCache(id);
         return new ResultDetail(result);
     }
 
     //查询时间区间内的充值记录
     @Override
     @Transactional
+    @Cacheable(value = "payHistory", key = "#payHistoryPageDTO.patientId + '_' + #payHistoryPageDTO.page + '_' + #payHistoryPageDTO.pageSize")
     public PageResult selectPayHistory(PayHistoryPageDTO payHistoryPageDTO) {
         Integer pageSize = payHistoryPageDTO.getPageSize();
         Integer pageNum = payHistoryPageDTO.getPage();
@@ -144,6 +151,7 @@ public class PatientMainServiceImpl implements PatientMainService {
     //查询患者历史挂号数据
     @Override
     @Transactional
+    @Cacheable(value = "guaHistory", key = "#guaHistoryPageDTO.patientId + '_' + #guaHistoryPageDTO.page + '_' + #guaHistoryPageDTO.pageSize")
     public PageResult selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO) {
 
         Integer pageSize = guaHistoryPageDTO.getPageSize();
@@ -186,4 +194,12 @@ public class PatientMainServiceImpl implements PatientMainService {
     public List<PayHistory> getAllPayList(AllTimeDTO allTimeDTO) {
         return patientMainMapper.getAllPayList(allTimeDTO);
     }
+
+    // 清除患者历史记录缓存
+    @CacheEvict(value = {"payHistory", "guaHistory"}, allEntries = true)
+    public void clearPatientHistoryCache(Long patientId) {
+        log.info("清除患者ID为{}的历史记录缓存", patientId);
+    }
 }
+
+

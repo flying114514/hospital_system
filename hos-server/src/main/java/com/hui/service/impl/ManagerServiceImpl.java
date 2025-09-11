@@ -15,6 +15,8 @@ import com.hui.vo.AllTimeVO;
 import com.hui.vo.ManagerLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ public class ManagerServiceImpl implements ManagerService {
     //获取所有排版信息
     @Override
     @Transactional
+    @Cacheable(value = "schedules", key = "#allTimeDTO.page + '_' + #allTimeDTO.pageSize + '_' + #allTimeDTO.name + '_' + #allTimeDTO.time")
     public PageResult getAllTime(AllTimeDTO allTimeDTO) {
         Integer pageNum = allTimeDTO.getPage();
         Integer pageSize = allTimeDTO.getPageSize();
@@ -77,5 +80,12 @@ public class ManagerServiceImpl implements ManagerService {
     @Transactional
     public List<AllTimeVO> getAllTimeList(AllTimeDTO allTimeDTO) {
         return managerMapper.getAllTimeList(allTimeDTO);
+    }
+
+    // 当排班信息发生变化时调用此方法清除缓存
+    @CacheEvict(value = "schedules", allEntries = true)
+    public void clearScheduleCache() {
+        log.info("清除排班信息缓存");
+        // 实际项目中，这个方法会在排班信息更新后被调用
     }
 }

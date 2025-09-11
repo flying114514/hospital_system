@@ -18,8 +18,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 捕获业务异常
-     * @param ex
-     * @return
      */
     @ExceptionHandler
     public Result exceptionHandler(BaseException ex){
@@ -39,6 +37,34 @@ public class GlobalExceptionHandler {
         }else {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }}
+
+
+    /**
+     * 处理空指针异常
+     */
+    @ExceptionHandler(NullPointerException.class)
+    public Result<String> handleNullPointerException(NullPointerException e) {
+        log.error("空指针异常: ", e);
+        return Result.error("系统空指针异常");
+    }
+
+    /**
+     * 处理运行时异常
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public Result<String> handleRuntimeException(RuntimeException e) {
+        log.error("运行时异常: ", e);
+        return Result.error("系统运行异常");
+    }
+
+    /**
+     * 处理其他异常
+     */
+    @ExceptionHandler(Exception.class)
+    public Result<String> handleException(Exception e) {
+        log.error("未知异常: ", e);
+        return Result.error("系统未知错误");
+    }
 }
 
 

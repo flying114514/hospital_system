@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hui.mapper.ManagerMapper">
+
+    <select id="getAllTime" resultType="com.hui.vo.AllTimeVO">
+        select name,begin_time,end_time,predict_time,remain from work_time
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            and begin_time between #{time} and now()
+        </where>
+    </select>
+    <select id="login" resultType="com.hui.vo.ManagerLoginVO">
+        select id,name,password from basic_manager where name=#{name} and password=#{password}
+     </select>
+</mapper>

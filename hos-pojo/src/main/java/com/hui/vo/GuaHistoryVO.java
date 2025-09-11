@@ -21,5 +21,6 @@ public class GuaHistoryVO {
     private String level;
     private Integer status;
     private Integer number;
+    private String cases;
 
 }

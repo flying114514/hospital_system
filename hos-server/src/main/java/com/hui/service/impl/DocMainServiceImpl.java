@@ -263,8 +263,14 @@ public class DocMainServiceImpl implements DocMainService {
         Cases cases = docMainMapper.getCases(casesDTO.getNumber());
         cases.setCases(casesDTO.getCases());
         cases.setCreateTime(LocalDateTime.now());
+        cases.setNumber(number);
 
         docMainMapper.insertCases(cases);
+
+        docMainMapper.insertOrder(cases);
+
+        //就诊结束,将状态改为已完成
+        docMainMapper.statusComplied(casesDTO.getNumber());
 
         return new CasesVO("接诊成功");
     }

@@ -5,7 +5,7 @@ package com.hui.constant;
  * */
 public class RegisteredStatusConstant {
 
-    //未顾好
+    //未挂号
     public static final Integer UN_REGISTERED = 0;
 
     //待叫号
@@ -31,6 +31,9 @@ public class RegisteredStatusConstant {
 
     //叫号中
     public static final Integer CALLING = 8;
+
+    //已完成
+    public static final Integer COMPLETED = 9;
 
 
 

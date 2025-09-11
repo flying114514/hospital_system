@@ -12,6 +12,7 @@ import com.hui.exception.PasswordErrorException;
 import com.hui.mapper.PatientMainMapper;
 import com.hui.result.PageResult;
 import com.hui.service.PatientMainService;
+import com.hui.vo.AllTimeVO;
 import com.hui.vo.GuaHistoryVO;
 import com.hui.vo.LoginVO;
 import com.hui.vo.MedicalCardVO;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PatientMainServiceImpl implements PatientMainService {
@@ -170,5 +172,18 @@ public class PatientMainServiceImpl implements PatientMainService {
         //计算平均分
         Double avgStar=patientMainMapper.getAvgStar();
         return "评分成功,当前医院评分为:"+avgStar;
+    }
+
+    //获取全部挂号数据
+    @Override
+    @Transactional
+    public List<GuaHistoryVO> getAllTimeList(AllTimeDTO allTimeDTO) {
+        return patientMainMapper.getAllTimeList(allTimeDTO);
+    }
+
+    //获取全部充值信息
+    @Override
+    public List<PayHistory> getAllPayList(AllTimeDTO allTimeDTO) {
+        return patientMainMapper.getAllPayList(allTimeDTO);
     }
 }

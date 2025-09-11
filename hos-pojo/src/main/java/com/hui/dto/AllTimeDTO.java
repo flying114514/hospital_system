@@ -16,4 +16,5 @@ public class AllTimeDTO {
     private Integer page;
     private Integer pageSize;
     private LocalDateTime time;
+    private Integer patientId;
 }

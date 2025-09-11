@@ -4,26 +4,38 @@ import com.hui.constant.JwtClaimsConstant;
 import com.hui.constant.RegisteredStatusConstant;
 import com.hui.context.BaseContext;
 import com.hui.dto.*;
+import com.hui.entity.PayHistory;
 import com.hui.entity.ResultDetail;
+import com.hui.mapper.DocMainMapper;
 import com.hui.mapper.PatientMainMapper;
 import com.hui.mapper.RegisterMapper;
 import com.hui.properties.JwtProperties;
 import com.hui.result.PageResult;
 import com.hui.result.Result;
+import com.hui.service.ManagerService;
 import com.hui.service.PatientMainService;
 import com.hui.service.RegisterService;
 import com.hui.utils.JwtUtil;
-import com.hui.vo.CancelOrderVO;
-import com.hui.vo.LoginVO;
-import com.hui.vo.MedicalCardVO;
-import com.hui.vo.PatientLoginVO;
+import com.hui.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,8 +58,15 @@ public class PatientMainController {
 
     @Autowired
     private RegisterService registerService;
+
     @Autowired
     private PatientMainMapper patientMainMapper;
+
+    @Autowired
+    private DocMainMapper docMainMapper;
+
+    @Autowired
+    private ManagerService managerService;
 
     //患者登录
     @PostMapping("/login")
@@ -98,6 +117,14 @@ public class PatientMainController {
         return Result.success(pageResult);
     }
 
+    //患者导出历史缴费记录excel
+    @GetMapping("/history/export")
+    public void exportAllPay(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time,
+                              HttpServletResponse response) throws IOException {
+        String name=patientMainMapper.getNameById(BaseContext.getCurrentId());
+        createPayExcel(time, response, name);
+    }
+
     //患者查看历史挂号记录
     @GetMapping("/guahistory")
     public Result<PageResult> selectGuaHistory(@RequestBody GuaHistoryPageDTO guaHistoryPageDTO){
@@ -106,6 +133,15 @@ public class PatientMainController {
         PageResult pageResult=patientMainService.selectGuaHistory(guaHistoryPageDTO);
         return Result.success(pageResult);
     }
+
+    //导出历史挂号信息excel
+    @GetMapping("/guahistory/export")//这两个数据可以不用传,也可以查
+    public void exportAllTime(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time,
+                              HttpServletResponse response) throws IOException {
+        String name=patientMainMapper.getNameById(BaseContext.getCurrentId());
+        createPayExcel(time, response, name);
+    }
+
     //患者取消挂号
     @PostMapping("/cancel")
     public Result<CancelOrderVO> cancelOrder(CancelOrderDTO cancelOrderDTO){
@@ -208,6 +244,121 @@ public class PatientMainController {
         }
         return null;
 
+    }
+    //创建excel
+    public void createExcel(LocalDate time, HttpServletResponse response, String name ) throws IOException {
+        log.info("导出挂号信息:name={}, time={}", name, time);
+
+        // 构造查询条件
+        AllTimeDTO allTimeDTO = AllTimeDTO.builder()
+                .name(name)
+                .time(time.atStartOfDay())
+                .patientId(Math.toIntExact(BaseContext.getCurrentId()))
+                .build();
+
+        // 获取数据
+        List<GuaHistoryVO> timeList = patientMainService.getAllTimeList(allTimeDTO);
+
+
+        // 设置响应头
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        String filename = "挂号信息.xlsx";
+        String encodedFilename = URLEncoder.encode(filename, "UTF-8").replace("+", "%20");
+        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename);
+
+
+        // 创建Excel工作簿
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("挂号信息");
+
+        // 创建表头
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"医生姓名", "科室", "科室位置", "创建时间", "价格", "支付方式", "级别", "号数", "医嘱"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+        }
+
+        // 填充数据
+        for (int i = 0; i < timeList.size(); i++) {
+            Row row = sheet.createRow(i + 1);
+            GuaHistoryVO vo = timeList.get(i);
+
+            row.createCell(0).setCellValue(vo.getDoctorName());
+            row.createCell(1).setCellValue(vo.getDepartment());
+            row.createCell(2).setCellValue(vo.getDepartmentLocation());
+            row.createCell(3).setCellValue(vo.getCreateTime());
+            row.createCell(4).setCellValue(vo.getPrice());
+            row.createCell(5).setCellValue(vo.getPaymentMethod());
+            row.createCell(6).setCellValue(vo.getLevel());
+            row.createCell(7).setCellValue(vo.getNumber());
+            row.createCell(8).setCellValue(vo.getCases());
+        }
+
+        // 调整列宽
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 写入响应
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    //创建excel
+    public void createPayExcel(LocalDate time, HttpServletResponse response, String name) throws IOException {
+        log.info("导出充值信息:name={}, time={}", name, time);
+
+        // 构造查询条件
+        AllTimeDTO allTimeDTO = AllTimeDTO.builder()
+                .name(name)
+                .time(time.atStartOfDay())
+                .patientId(Math.toIntExact(BaseContext.getCurrentId()))
+                .build();
+
+        // 获取数据
+        List<PayHistory> timeList = patientMainService.getAllPayList(allTimeDTO);
+
+
+        // 设置响应头
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        String filename = "充值信息.xlsx";
+        String encodedFilename = URLEncoder.encode(filename, "UTF-8").replace("+", "%20");
+        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename);
+
+
+        // 创建Excel工作簿
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("充值信息");
+
+        // 创建表头
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"充值金额", "充值时间", "充值方式"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+        }
+
+        // 填充数据
+        for (int i = 0; i < timeList.size(); i++) {
+            Row row = sheet.createRow(i + 1);
+            PayHistory vo = timeList.get(i);
+
+            row.createCell(0).setCellValue(vo.getMoney());
+            row.createCell(1).setCellValue(vo.getTime());
+            row.createCell(2).setCellValue(vo.getPaymentMethod());
+        }
+
+        // 调整列宽
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 写入响应
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
 

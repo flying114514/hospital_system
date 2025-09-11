@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface PatientMainMapper {
 
@@ -71,4 +73,9 @@ public interface PatientMainMapper {
     @Select("SELECT ROUND(AVG(star), 1) FROM star WHERE star IS NOT NULL")
     Double getAvgStar();
 
+    //获取全部挂号数据
+    List<GuaHistoryVO> getAllTimeList(AllTimeDTO allTimeDTO);
+
+    //获得全部缴费数据
+    List<PayHistory> getAllPayList(AllTimeDTO allTimeDTO);
 }

@@ -61,4 +61,24 @@
         from orders
         where patient_id = #{patientId}
     </select>
+    <select id="getAllTimeList" resultType="com.hui.vo.GuaHistoryVO">
+        select doctor_name,
+               department,
+               department_location,
+               create_time,
+               price,
+               payment_method,
+               level,
+               status,
+               number,
+               cases
+        from orders
+        where patient_id = #{patientId}
+          and create_time between #{time} and now()
+    </select>
+    <select id="getAllPayList" resultType="com.hui.entity.PayHistory">
+        select money,time,payment_method
+        from pay_history
+        where patient_id = #{patientId}
+    </select>
 </mapper>

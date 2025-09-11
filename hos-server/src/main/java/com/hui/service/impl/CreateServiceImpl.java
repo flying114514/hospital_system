@@ -76,7 +76,7 @@ public class CreateServiceImpl extends ServiceImpl<CreateMapper, PatientBasicInf
      * @return 年龄
      */
     @Transactional
-    private Integer calculateAgeFromIdCard(String idCard) {
+    public Integer calculateAgeFromIdCard(String idCard) {
         try {
             String birthDateStr=idCard.substring(6, 14);
             // 解析出生日期

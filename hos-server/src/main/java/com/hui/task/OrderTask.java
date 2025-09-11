@@ -84,8 +84,8 @@ public class OrderTask {
 
 
     //每天凌晨,根据医生的级别和累计完成就诊数和医院星级为医生分配挂号费
-    //@Scheduled(cron = "0 0 0 * * ?") // 每天凌晨0点执行
-    @Scheduled(cron = "0 * * * * ? ")
+    @Scheduled(cron = "0 0 0 * * ?") // 每天凌晨0点执行
+    //@Scheduled(cron = "0 * * * * ? ")
     public void assignRegistrationFees() {
         log.info("开始为医生分配挂号费: {}", LocalDateTime.now());
 

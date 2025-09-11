@@ -67,12 +67,14 @@ public class ManagerServiceImpl implements ManagerService {
 
     //实时获取top5
     @Override
+    @Transactional
     public List<DoctorVisitStats> getTopDoctorsByVisits(int number) {
         return managerMapper.getTopDoctorsByVisits(number);
     }
 
     //指定时间内模糊查询医生排版信息
     @Override
+    @Transactional
     public List<AllTimeVO> getAllTimeList(AllTimeDTO allTimeDTO) {
         return managerMapper.getAllTimeList(allTimeDTO);
     }

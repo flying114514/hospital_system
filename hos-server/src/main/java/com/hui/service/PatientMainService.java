@@ -1,10 +1,15 @@
 package com.hui.service;
 
 import com.hui.dto.*;
+import com.hui.entity.PayHistory;
 import com.hui.entity.ResultDetail;
 import com.hui.result.PageResult;
+import com.hui.vo.AllTimeVO;
+import com.hui.vo.GuaHistoryVO;
 import com.hui.vo.LoginVO;
 import com.hui.vo.MedicalCardVO;
+
+import java.util.List;
 
 public interface PatientMainService {
 
@@ -25,4 +30,10 @@ public interface PatientMainService {
 
     //患者为医院评分
     String setStar(StarDTO starDTO);
+
+    //获取全部挂号单数据
+    List<GuaHistoryVO> getAllTimeList(AllTimeDTO allTimeDTO);
+
+    //获得所有充值历史数据
+    List<PayHistory> getAllPayList(AllTimeDTO allTimeDTO);
 }

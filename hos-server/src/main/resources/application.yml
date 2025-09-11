@@ -51,6 +51,13 @@ hos:
     # 设置前端传递过来的令牌名称
     pat-token-name: authentication
 
+    # 设置jwt签名加密时使用的秘钥
+    man-secret-key: it-cast
+    # 设置jwt过期时间
+    man-ttl: 72000000
+    # 设置前端传递过来的令牌名称
+    man-token-name: tokenman
+
   alioss:
     endpoint: ${sky.alioss.endpoint}
     accessKeyId: ${sky.alioss.accessKeyId}

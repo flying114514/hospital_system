@@ -1,8 +1,8 @@
 package com.hui.config;
 
-import com.hui.interceptor.JwtTokenDocInterceptor;
-import com.hui.interceptor.JwtTokenManInterceptor;
-import com.hui.interceptor.JwtTokenPatInterceptor;
+import com.hui.mapper.interceptor.JwtTokenDocInterceptor;
+import com.hui.mapper.interceptor.JwtTokenManInterceptor;
+import com.hui.mapper.interceptor.JwtTokenPatInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

@@ -23,4 +23,12 @@ public class JwtProperties {
     private long patTtl;
     private String patTokenName;
 
+
+    /**
+     * 管理员端用户生成jwt令牌相关配置
+     */
+    private String manSecretKey;
+    private long manTtl;
+    private String manTokenName;
+
 }

@@ -2,7 +2,6 @@ package com.hui.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.hui.constant.MessageConstant;
 import com.hui.constant.RegisteredStatusConstant;
 import com.hui.dto.BankDTO;
 import com.hui.dto.PatientBasicInfoDTO;

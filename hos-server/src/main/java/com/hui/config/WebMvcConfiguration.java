@@ -1,7 +1,8 @@
 package com.hui.config;
 
-import com.hui.mapper.interceptor.JwtTokenDocInterceptor;
-import com.hui.mapper.interceptor.JwtTokenPatInterceptor;
+import com.hui.interceptor.JwtTokenDocInterceptor;
+import com.hui.interceptor.JwtTokenManInterceptor;
+import com.hui.interceptor.JwtTokenPatInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -17,6 +18,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Autowired
     private JwtTokenDocInterceptor jwtTokenDocInterceptor;
 
+    @Autowired
+    private JwtTokenManInterceptor jwtTokenManInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 配置患者端拦截器
@@ -29,5 +33,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .addPathPatterns("/doc/main/**")
                 .excludePathPatterns("/doc/main/login")
                 .excludePathPatterns("/doc/main/update");
+
+        // 配置管理员端拦截器
+        registry.addInterceptor(jwtTokenManInterceptor)
+                .addPathPatterns("/manager/**")
+                .excludePathPatterns("/manager/login");
     }
 }

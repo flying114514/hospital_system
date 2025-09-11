@@ -1,4 +1,4 @@
-package com.hui.mapper.interceptor;
+package com.hui.interceptor;
 
 
 import com.hui.constant.JwtClaimsConstant;

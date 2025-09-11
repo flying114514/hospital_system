@@ -172,6 +172,23 @@ public class PatientMainController {
         return Result.success(cancelOrderVO);
 
     }
+
+    //为医院评分,患者必须在至少经过一次就诊后才可以评分,患者每天只能评一次,防止水军(用定时任务类)
+    @PutMapping("/star")
+    public Result<String> setStar(StarDTO starDTO){
+        log.info("患者评分: star={}", starDTO);
+
+        Long patientId = BaseContext.getCurrentId();
+        starDTO.setPatientId(Math.toIntExact(patientId));
+
+        starDTO.setName(patientMainMapper.getNameById(patientId));
+
+        String result=patientMainService.setStar(starDTO);
+        return Result.success(result);
+    }
+
+
+
     public CancelOrderVO checkTime(CancelIngDTO cancelingDTO){
         //判断当前时间距离预计就诊时间是否还有15分钟,只查询取消中的挂号单
 
@@ -192,5 +209,6 @@ public class PatientMainController {
         return null;
 
     }
+
 
 }

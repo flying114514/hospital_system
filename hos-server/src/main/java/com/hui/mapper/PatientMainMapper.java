@@ -55,4 +55,20 @@ public interface PatientMainMapper {
     //见状态改回来
     @Update("update orders set status=#{status} where number=#{number}")
     void resrtStstus(CancelIngDTO cancelingDTO);
+
+    //设置星评
+    void setStar(StarDTO starDTO);
+
+    //根据id查询患者姓名
+    @Select("select name from basic_patient where id=#{patientId}")
+    String getNameById(Long patientId);
+
+    //检查患者今天有没有评过分
+    @Select("select star from star where patient_id=#{patientId} and date(create_time) = CURDATE()")
+    Double checkStar(StarDTO starDTO);
+
+    //计算平均分
+    @Select("SELECT ROUND(AVG(star), 1) FROM star WHERE star IS NOT NULL")
+    Double getAvgStar();
+
 }

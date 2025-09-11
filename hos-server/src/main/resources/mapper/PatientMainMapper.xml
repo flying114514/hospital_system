@@ -20,6 +20,10 @@
         set ${paymentMethod}=${paymentMethod} - #{money}
         where patient_id = #{patientId}
     </update>
+    <insert id="setStar">
+        insert into star (name, patient_id, star, create_time)
+        values (#{name}, #{patientId}, #{star}, #{time})
+    </insert>
 
 
     <select id="getByName" resultType="com.hui.vo.LoginVO">
@@ -44,8 +48,17 @@
         where patient_id = #{patientId}
     </select>
     <select id="selectGuaHistory" resultType="com.hui.vo.GuaHistoryVO">
-        select doctor_name,department,department_location,create_time,price,payment_method,level,status,number,cases
+        select doctor_name,
+               department,
+               department_location,
+               create_time,
+               price,
+               payment_method,
+               level,
+               status,
+               number,
+               cases
         from orders
-        where patient_id=#{patientId}
+        where patient_id = #{patientId}
     </select>
 </mapper>

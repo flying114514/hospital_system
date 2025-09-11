@@ -72,7 +72,6 @@ public class ManagerController {
         return Result.success(pageResult);
     }
 
-    //为医生分配挂号费
 
     //获取每天top5医生,可以传递给前端做图
     @GetMapping("/statistics/topDoctors")

@@ -35,7 +35,7 @@ public interface RegisterMapper extends BaseMapper<Registration> {
     //将号数存如挂号单
     void setNumber(TimeDTO timeDTO);
 
-    //根据患者id查询医生id//TODO只能查询一个,没有报错和二次挂号功能
+    //根据患者id查询医生id
     Long getDoctorId(Long currentPatientId);
 
     //根据医生id,更新医生号表,被选的号状态改为1

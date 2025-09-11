@@ -152,4 +152,23 @@ public class PatientMainServiceImpl implements PatientMainService {
         Page<GuaHistoryVO> page=patientMainMapper.selectGuaHistory(guaHistoryPageDTO);
         return new PageResult(page.getTotal(),page.getResult());
     }
+
+    //患者为医院评分
+    @Override
+    @Transactional
+    public String setStar(StarDTO starDTO) {
+        starDTO.setTime(LocalDateTime.now());
+
+        //评分前先查询患者今天有没有评过分
+        Double star=patientMainMapper.checkStar(starDTO);
+        if(star!=null){
+            //患者今天已经评过分
+            return "您今天已经评过分了";
+        }
+        patientMainMapper.setStar(starDTO);
+
+        //计算平均分
+        Double avgStar=patientMainMapper.getAvgStar();
+        return "评分成功,当前医院评分为:"+avgStar;
+    }
 }

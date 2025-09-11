@@ -23,5 +23,6 @@ public interface PatientMainService {
     //查询患者历史挂号数据
     PageResult selectGuaHistory(GuaHistoryPageDTO guaHistoryPageDTO);
 
-
+    //患者为医院评分
+    String setStar(StarDTO starDTO);
 }

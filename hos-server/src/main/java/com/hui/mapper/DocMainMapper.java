@@ -41,9 +41,6 @@ public interface DocMainMapper {
     //医生根据docid查询个人信息
     DetailInfo getDetailInfo(Long doctorId);
 
-    //根据级别设置价格
-    void setPriceByLevel(PriceDTO priceDTO);
-
     //根据id查询级别
     @Select("select level from doctor_details where doctor_id=#{doctorId}")
     String getLevel(Integer doctorId);

@@ -82,9 +82,6 @@ public class DoctorMainController {
         detailInfo.setDoctorId(Math.toIntExact(BaseContext.getCurrentId()));
         SetInfoVO setInfoVO=docMainService.setDetailInfo(detailInfo);
 
-        //根据级别设置价格PriceDTO
-        docMainService.setPriceByLevel(detailInfo.getLevel());
-
         return Result.success(setInfoVO);
     }
 

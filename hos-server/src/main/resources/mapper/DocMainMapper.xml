@@ -30,11 +30,6 @@
             work_experience     = #{workExperience}
         where doctor_id = #{doctorId}
     </update>
-    <update id="setPriceByLevel">
-        update doctor_details
-        set price = #{price}
-        where doctor_id = #{doctorId}
-    </update>
     <update id="changeStatus">
         update orders
         set status=2

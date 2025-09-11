@@ -18,8 +18,6 @@ public class DoctorDetails {
     private String department;
     private String departmentLocation;
     private String workExperience;
-    private String workTime;
-    private Integer remain;//余号
     private Double price;
     private String level;
 }

@@ -15,4 +15,23 @@
     <select id="login" resultType="com.hui.vo.ManagerLoginVO">
         select id,name,password from basic_manager where name=#{name}
      </select>
+    <select id="getTopDoctorsByVisits" resultType="com.hui.entity.DoctorVisitStats">
+        select doctor_name as doctorName,count(1) as visitCount
+        from orders
+        where status=9 and DATE(create_time) = CURDATE()
+        group by doctor_name
+        order by visitCount desc
+        limit 5
+    </select>
+    <select id="getAllTimeList" resultType="com.hui.vo.AllTimeVO">
+        select name,begin_time,end_time,predict_time,remain from work_time
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="time != null">
+                and begin_time between #{time} and now()
+            </if>
+        </where>
+    </select>
 </mapper>

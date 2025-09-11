@@ -22,9 +22,6 @@ public interface DocMainService {
     //医生设置排班信息
     SetBanVO setBanInfo(BanInfoDTO banInfoDTO);
 
-    //根据级别设置价格
-    void setPriceByLevel(String level);
-
     //分页查询排班信息
     PageResult getBanInfo(TimeInfoDTO timeInfoDTO);
 

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hui.constant.MessageConstant;
 import com.hui.dto.AllTimeDTO;
 import com.hui.dto.ManagerLoginDTO;
+import com.hui.entity.DoctorVisitStats;
 import com.hui.exception.AccountNotFoundException;
 import com.hui.exception.PasswordErrorException;
 import com.hui.mapper.ManagerMapper;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -61,5 +63,17 @@ public class ManagerServiceImpl implements ManagerService {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
         return managerLoginVO;
+    }
+
+    //实时获取top5
+    @Override
+    public List<DoctorVisitStats> getTopDoctorsByVisits(int number) {
+        return managerMapper.getTopDoctorsByVisits(number);
+    }
+
+    //指定时间内模糊查询医生排版信息
+    @Override
+    public List<AllTimeVO> getAllTimeList(AllTimeDTO allTimeDTO) {
+        return managerMapper.getAllTimeList(allTimeDTO);
     }
 }

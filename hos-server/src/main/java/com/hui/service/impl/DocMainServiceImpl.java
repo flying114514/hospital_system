@@ -130,8 +130,8 @@ public class DocMainServiceImpl implements DocMainService {
             setBanVO.setDetail("开始时间晚于结束时间");
             return setBanVO;
         }
-        if (beginTime.isBefore(LocalDateTime.now()) || endTime.isBefore(LocalDateTime.now())) {
-            setBanVO.setDetail("时间不能早于当前时间");
+        if (endTime.isBefore(LocalDateTime.now())) {
+            setBanVO.setDetail("时间不能晚于当前时间");
             return setBanVO;
         }
 
@@ -182,28 +182,6 @@ public class DocMainServiceImpl implements DocMainService {
         return setBanVO;
     }
 
-    //根据级别设置价格
-    @Override
-    @Transactional
-    public void setPriceByLevel(String level) {
-        Double price = 0.0;
-        switch (level) {
-            case "普通":
-                price = 10.0;
-                break;
-            case "专家":
-                price = 20.0;
-                break;
-            case "急诊":
-                price = 30.0;
-                break;
-        }
-        PriceDTO priceDTO = PriceDTO.builder()
-                .price(price)
-                .doctorId(Math.toIntExact(BaseContext.getCurrentId()))
-                .build();
-        docMainMapper.setPriceByLevel(priceDTO);
-    }
 
     //分页查询排班信息
     @Override

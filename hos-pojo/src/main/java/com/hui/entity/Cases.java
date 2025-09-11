@@ -18,5 +18,6 @@ public class Cases {
     private Integer doctorId;
     private String cases;
     private LocalDateTime createTime;
+    private Integer number;
 
 }

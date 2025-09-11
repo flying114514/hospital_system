@@ -44,7 +44,7 @@
         where patient_id = #{patientId}
     </select>
     <select id="selectGuaHistory" resultType="com.hui.vo.GuaHistoryVO">
-        select doctor_name,department,department_location,create_time,price,payment_method,level,status,number
+        select doctor_name,department,department_location,create_time,price,payment_method,level,status,number,cases
         from orders
         where patient_id=#{patientId}
     </select>

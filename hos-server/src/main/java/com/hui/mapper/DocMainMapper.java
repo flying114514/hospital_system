@@ -83,4 +83,10 @@ public interface DocMainMapper {
 
     //查询患者病例是否存在
     String checkCases(Integer number);
+
+    //在挂号处添加医嘱
+    void insertOrder(Cases cases);
+
+    //就诊完成,将状态改为已完成
+    void statusComplied(Integer number);
 }

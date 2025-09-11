@@ -62,6 +62,12 @@
         insert into cases (patient_id, patient_name, doctor_name, doctor_id, cases, create_time)
         values (#{patientId}, #{patientName}, #{doctorName}, #{doctorId}, #{cases}, #{createTime})
     </insert>
+    <update id="insertOrder">
+        update orders set cases=#{cases} where number=#{number} and status=2
+    </update>
+    <update id="statusComplied">
+        update orders set status=9 where number=#{number} and status=2
+    </update>
 
     <select id="getByIdCard" resultType="com.hui.vo.DocLoginVO">
         select id, name, id_card, password

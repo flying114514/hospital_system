@@ -86,4 +86,10 @@ public interface DocMainMapper {
 
     //就诊完成,将状态改为已完成
     void statusComplied(Integer number);
+
+    //获取所有医生的level
+    List<DoctorFeeDTO> getAllDoctorsWithVisitCount();
+
+    //添加医生挂号费
+    void updateDoctorRegistrationFee(UpdateDoctorFeeDTO updateDoctorFeeDTO);
 }

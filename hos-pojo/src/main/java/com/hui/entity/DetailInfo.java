@@ -21,4 +21,5 @@ public class DetailInfo {
     private String level;
     private String workExperience;
     private Integer doctorId;
+    private Double price;
 }

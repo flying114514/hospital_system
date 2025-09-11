@@ -63,6 +63,9 @@
     <update id="statusComplied">
         update orders set status=9 where number=#{number} and status=2
     </update>
+    <update id="updateDoctorRegistrationFee">
+        update doctor_details set price=#{registrationFee} where doctor_id=#{doctorId}
+    </update>
 
     <select id="getByIdCard" resultType="com.hui.vo.DocLoginVO">
         select id, name, id_card, password
@@ -76,7 +79,7 @@
           and id_card = #{idCard}
     </select>
     <select id="getDetailInfo" resultType="com.hui.entity.DetailInfo">
-        select department_location, name, department, profile, level, work_experience
+        select department_location, name, department, profile, level, work_experience,price
         from doctor_details
         where doctor_id = #{doctorId}
     </select>
@@ -98,6 +101,17 @@
         from orders
         where status = 8
           and number = #{number}
+    </select>
+    <select id="getAllDoctorsWithVisitCount" resultType="com.hui.dto.DoctorFeeDTO">
+        SELECT
+            d.doctor_id,
+            d.name,
+            d.level,
+            COALESCE(COUNT(o.id), 0) as number
+        FROM doctor_details d
+                 LEFT JOIN orders o ON d.doctor_id = o.doctor_id
+            AND o.status = 9
+        GROUP BY d.doctor_id, d.name, d.level
     </select>
 
 </mapper>

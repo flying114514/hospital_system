@@ -6,11 +6,6 @@ sky:
     database: hospital
     username: root
     password: "123456"
-  alioss:
-    endpoint: oss-cn-nanjing.aliyuncs.com
-    accessKeyId: LTAI5t8vS5ruMyzGFf9usYhe
-    accessKeySecret: r01mTvcwbmZ4WS2SZKSadwvi5TB8ZJ
-    bucketName: szdxhzau
 
   redis:
     host: localhost

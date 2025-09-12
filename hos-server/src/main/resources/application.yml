@@ -58,11 +58,6 @@ hos:
     # 设置前端传递过来的令牌名称
     man-token-name: tokenman
 
-  alioss:
-    endpoint: ${sky.alioss.endpoint}
-    accessKeyId: ${sky.alioss.accessKeyId}
-    accessKeySecret: ${sky.alioss.accessKeySecret}
-    bucketName: ${sky.alioss.bucketName}
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml

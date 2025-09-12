@@ -229,7 +229,7 @@ public class RegisterServiceImpl extends ServiceImpl<RegisterMapper, Registratio
     //患者取消挂号
     @Override
     @Transactional
-    @CacheEvict(value = "patientPayment", key = "#cancelingDTO.registerId")
+    @CacheEvict(value = "patientPayment", key = "#cancelingDTO.patientId")
     public CancelOrderVO cancelOrder(CancelIngDTO cancelingDTO) {
         CancelOrderVO cancelOrderVO = new CancelOrderVO();
         //不在15分钟内,可以取消

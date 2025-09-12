@@ -139,7 +139,7 @@ public class PatientMainController {
     public void exportAllTime(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate time,
                               HttpServletResponse response) throws IOException {
         String name=patientMainMapper.getNameById(BaseContext.getCurrentId());
-        createPayExcel(time, response, name);
+        createExcel(time, response, name);
     }
 
     //患者取消挂号

@@ -186,8 +186,6 @@ public class DocMainServiceImpl implements DocMainService {
         docMainMapper.batchSetBanInfo(banInfoList);
 
         setBanVO.setDetail("设置排班成功");
-        // 排班信息变更后，清除缓存
-        managerServiceImpl.clearScheduleCache();
         log.info("添加排班信息成功，已清除相关缓存");
         return setBanVO;
     }

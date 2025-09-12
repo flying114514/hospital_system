@@ -3,6 +3,7 @@ package com.hui.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -23,16 +24,24 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfiguration {
 
-    //该方法是用来创建一个redisTemplate对象,用它在java中操作redis
-    @Bean//将redisTemplate对象加入到ioc容器中
+    // 创建RedisTemplate对象用于操作Redis
+    @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
+        // 创建Jackson2JsonRedisSerializer序列化器
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         ObjectMapper om = new ObjectMapper();
+
+        // 关键修改：配置序列化时包含类型信息
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        // 新版本Jackson推荐使用LaissezFaireSubTypeValidator
+        om.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+
         jackson2JsonRedisSerializer.setObjectMapper(om);
 
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
@@ -40,9 +49,9 @@ public class RedisConfiguration {
         template.setKeySerializer(stringRedisSerializer);
         // hash的key也采用String的序列化方式
         template.setHashKeySerializer(stringRedisSerializer);
-        // value序列化方式采用jackson
+        // value序列化方式采用jackson，包含类型信息
         template.setValueSerializer(jackson2JsonRedisSerializer);
-        // hash的value序列化方式采用jackson
+        // hash的value序列化方式采用jackson，包含类型信息
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         template.afterPropertiesSet();
 
@@ -51,9 +60,22 @@ public class RedisConfiguration {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
+        // 创建Jackson2JsonRedisSerializer序列化器
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        ObjectMapper om = new ObjectMapper();
+
+        // 关键修改：缓存序列化也需要包含类型信息
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new Jackson2JsonRedisSerializer<>(Object.class)))
+                // 缓存value序列化方式也使用包含类型信息的配置
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
                 .entryTtl(Duration.ofHours(1)) // 设置缓存有效期1小时
                 .disableCachingNullValues(); // 不缓存空值
 

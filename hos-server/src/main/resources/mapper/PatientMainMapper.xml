@@ -81,4 +81,7 @@
         from pay_history
         where patient_id = #{patientId}
     </select>
+    <select id="checkGua" resultType="java.lang.Integer">
+        select id from orders where patient_id=#{patientId}
+    </select>
 </mapper>

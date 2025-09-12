@@ -1,5 +1,6 @@
 package com.hui.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hui.constant.MessageConstant;
@@ -160,6 +161,7 @@ public class PatientMainServiceImpl implements PatientMainService {
 
         //查orders表
         Page<GuaHistoryVO> page=patientMainMapper.selectGuaHistory(guaHistoryPageDTO);
+
         return new PageResult(page.getTotal(),page.getResult());
     }
 
@@ -168,6 +170,10 @@ public class PatientMainServiceImpl implements PatientMainService {
     @Transactional
     public String setStar(StarDTO starDTO) {
         starDTO.setTime(LocalDateTime.now());
+        //判断患者有没有挂过号
+        if(patientMainMapper.checkGua(starDTO)==null){
+            return "您从没有挂过号,请先挂号";
+        }
 
         //评分前先查询患者今天有没有评过分
         Double star=patientMainMapper.checkStar(starDTO);

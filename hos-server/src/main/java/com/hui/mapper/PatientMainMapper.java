@@ -80,5 +80,5 @@ public interface PatientMainMapper {
     List<PayHistory> getAllPayList(AllTimeDTO allTimeDTO);
 
     //判断患者有没有挂过号
-    Integer checkGua(StarDTO starDTO);
+    List<Integer> checkGua(StarDTO starDTO);
 }

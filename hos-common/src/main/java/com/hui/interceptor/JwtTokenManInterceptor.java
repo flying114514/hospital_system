@@ -48,11 +48,11 @@ public class JwtTokenManInterceptor implements HandlerInterceptor {
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getManSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.MAN_ID).toString());
-            log.info("当前管理员id：{}", empId);
+            Long manId = Long.valueOf(claims.get(JwtClaimsConstant.MAN_ID).toString());
+            log.info("当前管理员id：{}", manId);
 
-            //将医生id设置到ThreadLocal中,重点
-            BaseContext.setCurrentId(empId);
+            //将管理员id设置到ThreadLocal中,重点
+            BaseContext.setCurrentId(manId);
 
             //3、通过，放行
             return true;
